@@ -2,6 +2,8 @@ const express = require("express");
 const path = require("path"); //ms azure
 
 const app = express();
+
+// put this in db.js file
 const Pool = require("pg").Pool;
 const pool = new Pool({
   user: "leaps",
