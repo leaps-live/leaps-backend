@@ -48,6 +48,59 @@ CREATE TABLE tbl_team_league (
     teamCategories TEXT[]
 );
 
+CREATE TABLE tbl_game (
+  gameid UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
+  gameName VARCHAR(30) NOT NULL,
+  teamA UUID REFERENCES tbl_team(teamid) ON DELETE CASCADE NOT NULL,
+  teamB UUID REFERENCES tbl_team(teamid) ON DELETE CASCADE NOT NULL,
+  leagueid UUID REFERENCES tbl_league(leagueid) ON DELETE CASCADE NOT NULL,
+  startTime TIMESTAMP,
+  endTime TIMESTAMP,
+  teamA_score INT NOT NULL DEFAULT 0,
+  teamB_score INT NOT NULL DEFAULT 0,
+  isStart BOOLEAN NOT NULL DEFAULT FALSE,
+  isEnd BOOLEAN NOT NULL DEFAULT FALSE,
+  recordingurl TEXT[]
+);
+
+CREATE TABLE tbl_game_league (
+   game_leagueid UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
+   gameid UUID REFERENCES tbl_game(gameid) ON DELETE CASCADE NOT NULL,
+   leagueid UUID REFERENCES tbl_league(leagueid) ON DELETE CASCADE NOT NULL
+);
+
+CREATE TABLE tbl_game_team (
+    game_teamid UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
+    teamid UUID REFERENCES tbl_team(teamid) ON DELETE CASCADE NOT NULL,
+    gameid UUID REFERENCES tbl_game(gameid) ON DELETE CASCADE NOT NULL,
+    score INT NOT NULL DEFAULT 0,
+    assists INT NOT NULL DEFAULT 0,
+    blocks INT NOT NULL DEFAULT 0,
+    rebounds INT NOT NULL DEFAULT 0,
+    steals INT NOT NULL DEFAULT 0,
+    turnovers INT NOT NULL DEFAULT 0,
+    fouls INT NOT NULL DEFAULT 0
+);
+
+CREATE TABLE tbl_game_user (
+    game_userid UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
+    userid UUID REFERENCES tbl_user(userid) ON DELETE CASCADE NOT NULL,
+    gameid UUID REFERENCES tbl_game(gameid) ON DELETE CASCADE NOT NULL,
+    score INT NOT NULL DEFAULT 0,
+    assists INT NOT NULL DEFAULT 0,
+    blocks INT NOT NULL DEFAULT 0,
+    rebounds INT NOT NULL DEFAULT 0,
+    steals INT NOT NULL DEFAULT 0,
+    turnovers INT NOT NULL DEFAULT 0,
+    fouls INT NOT NULL DEFAULT 0,
+    fieldGoalMade INT NOT NULL DEFAULT 0,
+    fieldGoalAttempted INT NOT NULL DEFAULT 0,
+    threePointMade INT NOT NULL DEFAULT 0,
+    threePointAttempted INT NOT NULL DEFAULT 0,
+    ftMade INT NOT NULL DEFAULT 0,
+    ftAttempted INT NOT NULL DEFAULT 0
+);
+
 -- Example Data Insert for tbl_user
 INSERT INTO tbl_user (userFormalName, username, userEmail, userPassword, userBirthday, userHeight, userWeight) VALUES ('Julius Cecilia', 'juliuscecilia33', 'juliuscecilia33@gmail.com', 'asdfasdf', '05/30/2002','5','135');
 
@@ -63,55 +116,7 @@ CREATE TABLE tbl_user_Type (
     user_type VARCHAR(55) NOT NULL,
 )
 
-CREATE TABLE tbl_game (
-  gameid UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
-  gameName VARCHAR(30) NOT NULL,
-  --teamA UUID REFERENCES tblTeam(teamid) NOT NULL ON DELETE CASCADE,
-  --teamB UUID REFERENCES tblTeam(teamid) NOT NULL ON DELETE CASCADE,
-  leagueid UUID REFERENCES tblLeague(leagueid) NOT NULL ON DELETE CASCADE,
-  startTime DATETIME,
-  endTime DATETIME,
-  --teamA_score INT NOT NULL DEFAULT 0,
-  --teamB_score INT NOT NULL DEFAULT 0,
-  isStart BOOLEAN NOT NULL DEFAULT FALSE,
-  isEnd BOOLEAN NOT NULL DEFAULT FALSE,
-  recordingurl TEXT[]
-)
 
---CREATE TABLE tbl_game_league (
---    game_leagueid UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
---    gameid UUID REFERENCES tblGame(gameid) NOT NULL ON DELETE CASCADE,
---    leagueid UUID REFERENCES tblLeague(leagueid) NOT NULL ON DELETE CASCADE
---)
 
-CREATE TABLE tbl_game_team (
-    game_teamid UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
-    teamid UUID REFERENCES tblTeam(teamid) NOT NULL ON DELETE CASCADE,
-    gameid UUID REFERENCES tblGame(gameid) NOT NULL ON DELETE CASCADE,
-    score INT NOT NULL DEFAULT 0,
-    assists INT NOT NULL DEFAULT 0,
-    blocks INT NOT NULL DEFAULT 0,
-    rebounds INT NOT NULL DEFAULT 0,
-    steals INT NOT NULL DEFAULT 0,
-    turnovers INT NOT NULL DEFAULT 0,
-    fouls INT NOT NULL DEFAULT 0,
-)
 
-CREATE TABLE tbl_game_user (
-    game_userid UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
-    userid UUID REFERENCES tblUser(userid) NOT NULL ON DELETE CASCADE,
-    gameid UUID REFERENCES tblGame(gameid) NOT NULL ON DELETE CASCADE,
-    score INT NOT NULL DEFAULT 0,
-    assists INT NOT NULL DEFAULT 0,
-    blocks INT NOT NULL DEFAULT 0,
-    rebounds INT NOT NULL DEFAULT 0,
-    steals INT NOT NULL DEFAULT 0,
-    turnovers INT NOT NULL DEFAULT 0,
-    fouls INT NOT NULL DEFAULT 0,
-    fieldGoalMade INT NOT NULL DEFAULT 0,
-    fieldGoalAttempted INT NOT NULL DEFAULT 0,
-    3ptMade INT NOT NULL DEFAULT 0,
-    3ptAttempted INT NOT NULL DEFAULT 0,
-    FTMade INT NOT NULL DEFAULT 0,
-    FTAttempted INT NOT NULL DEFAULT 0
-)
+
