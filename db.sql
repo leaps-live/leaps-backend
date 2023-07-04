@@ -12,11 +12,49 @@ CREATE TABLE tbl_user (
     userCoins INT NOT NULL DEFAULT 0
 );
 
+-- League Table
+CREATE TABLE tbl_league (
+    leagueId UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
+    leagueName VARCHAR(105) NOT NULL,
+    leagueDescription VARCHAR,
+    leagueCreator UUID REFERENCES tbl_user(userId) ON DELETE CASCADE NOT NULL,
+    leagueAdmin TEXT[],
+    leagueCategories TEXT[] NOT NULL
+);
+
+-- Team Table
+CREATE TABLE tbl_team (
+    teamId UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
+    teamCategories TEXT[],
+    teamName VARCHAR(25) NOT NULL,
+    teamCreateDate DATE NOT NULL,
+    teamDescription VARCHAR NOT NULL,
+    teamCreator UUID REFERENCES tbl_user(userId) ON DELETE CASCADE NOT NULL 
+);
+
+-- Bridge Table Between the Team and the team's Players
+CREATE TABLE tbl_team_players (
+    teamPlayersId UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
+    teamId UUID REFERENCES tbl_team(teamId) ON DELETE CASCADE NOT NULL,
+    userId UUID REFERENCES tbl_user(userId) ON DELETE CASCADE NOT NULL,
+    userRole BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+-- Bridge Table Between the Team and League the team is apart of 
+CREATE TABLE tbl_team_league (
+    teamLeagueId UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
+    teamId UUID REFERENCES tbl_team(teamId) ON DELETE CASCADE NOT NULL,
+    leagueId UUID REFERENCES tbl_league(leagueId) ON DELETE CASCADE NOT NULL
+);
+
 -- Example Data Insert for tbl_user
 INSERT INTO tbl_user (userFormalName, username, userEmail, userPassword, userBirthday, userHeight, userWeight) VALUES ('Julius Cecilia', 'juliuscecilia33', 'juliuscecilia33@gmail.com', 'asdfasdf', '05/30/2002','5','135');
 
 
-----------------------------
+
+-- The tables below this line have not been added to our AWS Postgres DB yet...
+
+--------------------------------------------------------------------------------------------------------------------------------------------
 
 
 CREATE TABLE tblUser_Type (
@@ -24,33 +62,17 @@ CREATE TABLE tblUser_Type (
     user_type VARCHAR(55) NOT NULL,
 )
 
-CREATE TABLE tbl_league (
-    league_id UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
-    leagueName VARCHAR(105) NOT NULL,
-    leagueDescription VARCHAR NOT NULL,
-    leagueAdmin TEXT[] --store userid
-)
-
-CREATE TABLE tbl_category (
-    categoryid UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
-    categories TEXT[] NOT NULL
-    leagueid UUID REFERENCES tblLeague(leagueid) NOT NULL ON DELETE CASCADE
-)
-
-CREATE TABLE tbl_team (
-    teamid UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
-    categoryid UUID REFERENCES tblCategory(categoryid) NOT NULL ON DELETE CASCADE,
-    teamName VARCHAR(25) NOT NULL,
-    createDate DATE NOT NULL,
-    teamDescription VARCHAR NOT NULL,
-    creator UUID REFERENCES tblUser(userid) NOT NULL ON DELETE CASCADE
-)
+-- CREATE TABLE tbl_category (
+--     categoryid UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
+--     categories TEXT[] NOT NULL
+--     leagueid UUID REFERENCES tblLeague(leagueid) NOT NULL ON DELETE CASCADE
+-- )
 
 CREATE TABLE tbl_team_user (
-    team_userid UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
-    teamid UUID REFERENCES tblTeam(teamid) NOT NULL ON DELETE CASCADE,
-    userid UUID REFERENCES tblUser(userid) NOT NULL ON DELETE CASCADE,
-    isCaptain BOOLEAN NOT NULL DEFAULT FALSE
+    teamUserId UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
+    teamId UUID REFERENCES tblTeam(teamid) NOT NULL ON DELETE CASCADE,
+    userId UUID REFERENCES tblUser(userid) NOT NULL ON DELETE CASCADE,
+    userRole BOOLEAN NOT NULL DEFAULT FALSE
 )
 
 CREATE TABLE tbl_game (
