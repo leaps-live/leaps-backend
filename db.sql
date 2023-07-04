@@ -1,10 +1,10 @@
 -- Users Table 
 CREATE TABLE tbl_user (
     userId UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
-    -- user_typeid UUID REFERENCES tblUser_Type(user_typeid) NOT NULL ON DELETE CASCADE,
-    userFormalName VARCHAR(55) NOT NULL,
+    userFirstName VARCHAR(55) NOT NULL,
+    userLastName VARCHAR(55) NOT NULL,
     username VARCHAR(105) NOT NULL,
-    userEmail VARCHAR(25) NOT NULL,
+    userEmail VARCHAR(40) NOT NULL,
     userPassword VARCHAR(25) NOT NULL,
     userBirthday DATE NOT NULL,
     userHeight DECIMAL,
@@ -32,14 +32,6 @@ CREATE TABLE tbl_team (
     teamCreator UUID REFERENCES tbl_user(userId) ON DELETE CASCADE NOT NULL 
 );
 
--- Bridge table for the categories a team has for a specific league
-CREATE TABLE tbl_team_categories_for_league (
-    teamCategoriesLeagueId UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
-    leagueId UUID REFERENCES tbl_league(leagueId) ON DELETE CASCADE NOT NULL,
-    teamId UUID REFERENCES tbl_team(teamId) ON DELETE CASCADE NOT NULL,
-    teamCategories TEXT[]
-);
-
 -- Bridge Table Between the Team and the team's Players
 CREATE TABLE tbl_team_players (
     teamPlayersId UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
@@ -52,7 +44,8 @@ CREATE TABLE tbl_team_players (
 CREATE TABLE tbl_team_league (
     teamLeagueId UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
     teamId UUID REFERENCES tbl_team(teamId) ON DELETE CASCADE NOT NULL,
-    leagueId UUID REFERENCES tbl_league(leagueId) ON DELETE CASCADE NOT NULL
+    leagueId UUID REFERENCES tbl_league(leagueId) ON DELETE CASCADE NOT NULL,
+    teamCategories TEXT[]
 );
 
 -- Example Data Insert for tbl_user
