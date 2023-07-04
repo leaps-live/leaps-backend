@@ -32,6 +32,14 @@ CREATE TABLE tbl_team (
     teamCreator UUID REFERENCES tbl_user(userId) ON DELETE CASCADE NOT NULL 
 );
 
+-- Bridge table for the categories a team has for a specific league
+CREATE TABLE tbl_team_categories_for_league (
+    teamCategoriesLeagueId UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
+    leagueId UUID REFERENCES tbl_league(leagueId) ON DELETE CASCADE NOT NULL,
+    teamId UUID REFERENCES tbl_team(teamId) ON DELETE CASCADE NOT NULL,
+    teamCategories TEXT[]
+);
+
 -- Bridge Table Between the Team and the team's Players
 CREATE TABLE tbl_team_players (
     teamPlayersId UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
@@ -57,22 +65,9 @@ INSERT INTO tbl_user (userFormalName, username, userEmail, userPassword, userBir
 --------------------------------------------------------------------------------------------------------------------------------------------
 
 
-CREATE TABLE tblUser_Type (
+CREATE TABLE tbl_user_Type (
     user_typeid UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
     user_type VARCHAR(55) NOT NULL,
-)
-
--- CREATE TABLE tbl_category (
---     categoryid UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
---     categories TEXT[] NOT NULL
---     leagueid UUID REFERENCES tblLeague(leagueid) NOT NULL ON DELETE CASCADE
--- )
-
-CREATE TABLE tbl_team_user (
-    teamUserId UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
-    teamId UUID REFERENCES tblTeam(teamid) NOT NULL ON DELETE CASCADE,
-    userId UUID REFERENCES tblUser(userid) NOT NULL ON DELETE CASCADE,
-    userRole BOOLEAN NOT NULL DEFAULT FALSE
 )
 
 CREATE TABLE tbl_game (
