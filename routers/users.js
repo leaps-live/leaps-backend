@@ -77,7 +77,7 @@ router.delete("/:userid", async (req, res) => {
   try {
     const { userid } = req.params;
 
-    //check whether user exist
+    // check whether user exist
     const user = await pool.query("SELECT * FROM tbl_user WHERE userid = $1", [
       userid,
     ]);
@@ -86,7 +86,7 @@ router.delete("/:userid", async (req, res) => {
       return res.status(401).json("User does not exist...");
     }
 
-    //if user exists, delete the user and return the id
+    // if user exists, delete the user and return the id
     const deleteUser = await pool.query(
       "DELETE FROM tbl_user WHERE userId = $1",
       [userid]

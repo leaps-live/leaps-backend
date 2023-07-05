@@ -1,0 +1,120 @@
+const express = require("express");
+const router = express.Router();
+const pool = require("../db");
+
+// Create New Game
+router.post("/new", async (req, res) => {
+  try {
+    const { gameName, teamA, teamB, leagueid, startTime, endTime } = req.body;
+
+    let newGane = await pool.query(
+      "INSERT INTO tbl_game (gameName, teamA, teamB, leagueid, startTime, endTime) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+      [gameName, teamA, teamB, leagueid, startTime, endTime]
+    );
+
+    res.json(newGame.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+//Delete a game by id
+router.delete("/:gameid", async (req, res) => {
+  try {
+    const { gameid } = req.params;
+
+    //check whether game exists
+    const gameExists = await pool.query(
+      "SELECT * FROM tbl_game WHERE gameid = $1",
+      [gameid]
+    );
+
+    if (gameExists.rows.length === 0) {
+      return res.status(401).json("Game does not exist...");
+    }
+
+    const deleteGame = await pool.query(
+      "DELETE FROM tbl_game WHERE gameid = $1",
+      [gameid]
+    );
+
+    res.json("Successfully Deleted the Game: " + gameid);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+// Get Game Information by game id
+router.get("/:gameid", async (req, res) => {
+  try {
+    const { gameid } = req.params;
+
+    //check whether game exists
+    const gameExists = await pool.query(
+      "SELECT * FROM tbl_game WHERE gameid = $1",
+      [gameid]
+    );
+
+    if (gameExists.rows.length === 0) {
+      return res.status(401).json("Game does not exist...");
+    }
+
+    //get the Game info
+    const getGameInfo = await pool.query(
+      "SELECT * FROM tbl_game WHERE gameid = $1",
+      [gameid]
+    );
+
+    res.json(getGameInfo.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+// Edit Game information based off gameid
+router.put("/:gameid", async (req, res) => {
+  try {
+    const { gameid } = req.params;
+    const {
+      gameName,
+      teamA,
+      teamB,
+      leagueid,
+      startTime,
+      endTime,
+      teamA_score,
+      teamB_score,
+      isStart,
+      isEnd,
+      recordingurl,
+    } = req.body;
+
+    const updateGame = await pool.query(
+      "UPDATE tbl_league SET gameName = $1, teamA = $2, teamB = $3, leagueid = $4, startTime = $5, endTime = $6, teamA_score = $7, teamB_score = $8, isStart = $9, isEnd = $10, recordingurl = $11 WHERE gameid = $12 RETURNING *",
+      [
+        gameName,
+        teamA,
+        teamB,
+        leagueid,
+        startTime,
+        endTime,
+        teamA_score,
+        teamB_score,
+        isStart,
+        isEnd,
+        recordingurl,
+        gameid,
+      ]
+    );
+
+    res.json(updateGame.rows[0]);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+module.exports = router;
