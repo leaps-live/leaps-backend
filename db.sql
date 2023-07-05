@@ -3,8 +3,8 @@ CREATE TABLE tbl_user (
     userId UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
     userFirstName VARCHAR(55) NOT NULL,
     userLastName VARCHAR(55) NOT NULL,
-    username VARCHAR(105) NOT NULL,
-    userEmail VARCHAR(40) NOT NULL,
+    username VARCHAR(105) NOT NULL UNIQUE,
+    userEmail VARCHAR(40) NOT NULL UNIQUE,
     userPassword VARCHAR(25) NOT NULL,
     userBirthday DATE NOT NULL,
     userHeight DECIMAL,
@@ -15,18 +15,18 @@ CREATE TABLE tbl_user (
 -- League Table
 CREATE TABLE tbl_league (
     leagueId UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
-    leagueName VARCHAR(105) NOT NULL,
+    leagueName VARCHAR(105) UNIQUE NOT NULL,
     leagueDescription VARCHAR,
     leagueCreator UUID REFERENCES tbl_user(userId) ON DELETE CASCADE NOT NULL,
     leagueAdmin TEXT[],
-    leagueCategories TEXT[] NOT NULL
+    leagueCategories TEXT[]
 );
 
 -- Team Table
 CREATE TABLE tbl_team (
     teamId UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
     teamCategories TEXT[],
-    teamName VARCHAR(25) NOT NULL,
+    teamName VARCHAR(25) UNIQUE NOT NULL,
     teamCreateDate DATE NOT NULL,
     teamDescription VARCHAR NOT NULL,
     teamCreator UUID REFERENCES tbl_user(userId) ON DELETE CASCADE NOT NULL 

@@ -28,5 +28,6 @@ pool
 app.use(express.json());
 
 app.use("/users", require("./routers/users"));
+app.use("/leagues", require("./routers/leagues"));
 
 app.listen(8080, () => console.log("Server listening on port 8080"));

@@ -72,4 +72,58 @@ router.post("/login", async (req, res) => {
   }
 });
 
+//Delete a user by userid
+router.delete("/:userid", async (req, res) => {
+  try {
+    const { userid } = req.params;
+
+    //check whether user exist
+    const user = await pool.query("SELECT * FROM tbl_user WHERE userid = $1", [
+      userid,
+    ]);
+
+    if (user.rows.length === 0) {
+      return res.status(401).json("User does not exist...");
+    }
+
+    //if user exists, delete the user and return the id
+    const deleteUser = await pool.query(
+      "DELETE FROM tbl_user WHERE userId = $1",
+      [userid]
+    );
+
+    res.json("Successfully Deleted the user: " + userid);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+// Get User information by userid
+router.get("/:userid", async (req, res) => {
+  try {
+    const { userid } = req.params;
+
+    //check whether user exist
+    const user = await pool.query("SELECT * FROM tbl_user WHERE userId = $1", [
+      userid,
+    ]);
+
+    if (user.rows.length === 0) {
+      return res.status(401).json("User does not exist...");
+    }
+
+    //get the user info
+    const getUserInfo = await pool.query(
+      "SELECT * FROM tbl_user WHERE userId = $1",
+      [userid]
+    );
+
+    res.json(getUserInfo.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
 module.exports = router;
