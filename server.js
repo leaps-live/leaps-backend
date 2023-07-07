@@ -1,5 +1,7 @@
 const express = require("express");
-const path = require("path"); //ms azure
+const path = require("path");
+
+require("dotenv").config();
 
 const app = express();
 
@@ -7,9 +9,9 @@ const app = express();
 const Pool = require("pg").Pool;
 const pool = new Pool({
   user: "leaps",
-  password: "leaps52820231747", // put this in env file
+  password: process.env.DATABASE_PASSWORD, // put this in env file
   database: "initial_leaps",
-  host: "leaps-db-instance.ckw3zjvtld3t.us-west-1.rds.amazonaws.com",
+  host: process.env.DATABASE_HOST,
   port: 5432,
   ssl: { rejectUnauthorized: false },
 });
