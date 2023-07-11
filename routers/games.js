@@ -5,11 +5,29 @@ const pool = require("../db");
 // Create New Game
 router.post("/new", async (req, res) => {
   try {
-    const { gameName, teamA, teamB, leagueid, startTime, endTime } = req.body;
+    const {
+      gameName,
+      teamA,
+      teamB,
+      leagueid,
+      startTime,
+      endTime,
+      numberOfQuarters,
+      minutesPerQuarter,
+    } = req.body;
 
     let newGane = await pool.query(
-      "INSERT INTO tbl_game (gameName, teamA, teamB, leagueid, startTime, endTime) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
-      [gameName, teamA, teamB, leagueid, startTime, endTime]
+      "INSERT INTO tbl_game (gameName, teamA, teamB, leagueid, startTime, endTime, numberOfQuarters, minutesPerQuarter) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
+      [
+        gameName,
+        teamA,
+        teamB,
+        leagueid,
+        startTime,
+        endTime,
+        numberOfQuarters,
+        minutesPerQuarter,
+      ]
     );
 
     res.json(newGame.rows[0]);
@@ -90,10 +108,12 @@ router.put("/:gameid", async (req, res) => {
       isStart,
       isEnd,
       recordingurl,
+      numberOfQuarters,
+      minutesPerQuarter,
     } = req.body;
 
     const updateGame = await pool.query(
-      "UPDATE tbl_league SET gameName = $1, teamA = $2, teamB = $3, leagueid = $4, startTime = $5, endTime = $6, teamA_score = $7, teamB_score = $8, isStart = $9, isEnd = $10, recordingurl = $11 WHERE gameid = $12 RETURNING *",
+      "UPDATE tbl_league SET gameName = $1, teamA = $2, teamB = $3, leagueid = $4, startTime = $5, endTime = $6, teamA_score = $7, teamB_score = $8, isStart = $9, isEnd = $10, recordingurl = $11, numberOfQuarters = $12, minutesPerQuarter = $13 WHERE gameid = $14 RETURNING *",
       [
         gameName,
         teamA,
@@ -106,6 +126,8 @@ router.put("/:gameid", async (req, res) => {
         isStart,
         isEnd,
         recordingurl,
+        numberOfQuarters,
+        minutesPerQuarter,
         gameid,
       ]
     );

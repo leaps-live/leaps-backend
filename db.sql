@@ -60,7 +60,9 @@ CREATE TABLE tbl_game (
   teamB_score INT NOT NULL DEFAULT 0,
   isStart BOOLEAN NOT NULL DEFAULT FALSE,
   isEnd BOOLEAN NOT NULL DEFAULT FALSE,
-  recordingurl VARCHAR
+  recordingurl VARCHAR,
+  numberOfQuarters INT NOT NULL DEFAULT 1,
+  minutesPerQuarter INT NOT NULL DEFAULT 5,
 );
 
 CREATE TABLE tbl_game_league (
