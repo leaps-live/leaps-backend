@@ -2,6 +2,18 @@ const express = require("express");
 const router = express.Router();
 const pool = require("../db");
 
+//test for francis
+router.post("/test", async (req, res) => {
+  try {
+      let num = req.body;
+
+      res.json(num++);
+  } catch(error) { 
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+})
+
 //1. create a team with basic info
 router.post("/create", async (req, res) => {
   try {
@@ -84,6 +96,10 @@ router.get("/", async (req, res) => {
 router.delete("/:teamid", async (req, res) => {
   try {
     const { teamid } = req.params;
+
+    const deleteTeam = pool.query("DELETE FROM tbl_team WHERE teamid = $1 RETURNING *", [teamid]);
+
+    res.json("Successfully action");
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server Error");
