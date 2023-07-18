@@ -42,6 +42,7 @@ router.post("/create", async (req, res) => {
       [teamName]
     );
 
+    //insert the first records into the tbl_team_players
     const createTeamPlayer = await pool.query(
       "INSERT INTO tbl_team_players (teamid, userid, userRole) VALUES ($1, $2, $3) RETURNING *",
       [teamid, teamCreator, true]
@@ -108,7 +109,10 @@ router.delete("/:teamid", async (req, res) => {
   try {
     const { teamid } = req.params;
 
-    const deleteTeam = pool.query("DELETE FROM tbl_team WHERE teamid = $1 RETURNING *", [teamid]);
+    const deleteTeam = pool.query(
+      "DELETE FROM tbl_team WHERE teamid = $1 RETURNING *",
+      [teamid]
+    );
 
     res.json("Successfully action");
   } catch (error) {
@@ -116,3 +120,5 @@ router.delete("/:teamid", async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
+
+module.exports = router;
