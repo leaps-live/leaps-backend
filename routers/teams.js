@@ -36,6 +36,17 @@ router.post("/create", async (req, res) => {
       [teamCategories, teamName, teamDescription, teamCreator, teamCreateDate]
     );
 
+    //get the teamid
+    const teamid = await pool.query(
+      "SELECT teamid FROM tbl_team WHERE teamName = $1",
+      [teamName]
+    );
+
+    const createTeamPlayer = await pool.query(
+      "INSERT INTO tbl_team_players (teamid, userid, userRole) VALUES ($1, $2, $3) RETURNING *",
+      [teamid, teamCreator, true]
+    );
+
     res.json("Successfully create a new team");
   } catch (error) {
     console.error(error.message);
