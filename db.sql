@@ -118,6 +118,11 @@ CREATE TABLE tbl_user_Type (
     user_type VARCHAR(55) NOT NULL,
 )
 
+CREATE TABLE tbl_league_Type (
+     league_typeid UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
+     league_type VARCHAR(55) NOT NULL,
+)
+
 
 
 
