@@ -6,7 +6,8 @@ const pool = require("../db");
 router.post("/register", async (req, res) => {
   try {
     const {
-      userFormalName,
+      userFirstName,
+      userLastName,
       username,
       userEmail,
       userPassword,
@@ -26,9 +27,10 @@ router.post("/register", async (req, res) => {
     }
 
     let newUser = await pool.query(
-      "INSERT INTO tbl_user (userFormalName, username, userEmail, userPassword, userBirthday, userHeight, userWeight) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+      "INSERT INTO tbl_user (userFirstName, userLastName, username, userEmail, userPassword, userBirthday, userHeight, userWeight) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
       [
-        userFormalName,
+        userFirstName,
+        userLastName,
         username,
         userEmail,
         userPassword,
