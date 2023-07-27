@@ -126,4 +126,23 @@ router.get("/:userid", async (req, res) => {
   }
 });
 
+
+//search by name[get route]
+router.get("/userName", async (req, res) => {
+    try {
+      const {userName} = req.body;
+
+      const getName = await pool.query(
+        "SELECT * FROM tbl_user WHERE userName LIKE $1",
+        [`%${userName}%`]
+      );
+
+      res.json(getName.rows);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send("Server Error");
+    }
+})
+
+
 module.exports = router;
