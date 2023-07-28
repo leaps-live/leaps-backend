@@ -137,7 +137,7 @@ router.get("/username/:userName", async (req, res) => {
       [`%${userName}%`]
     );
 
-    res.json(getName.rows);
+    res.json(getName.rows[0]);
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");
