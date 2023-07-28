@@ -53,12 +53,13 @@ router.delete("/delete", async (req, res) => {
 //edit team category
 
 //get all the team from the league
-router.get("/:leagueid", async (req, res) => {
-  try {
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
-  }
-});
+
+// router.get("/:leagueid", async (req, res) => {
+//   try {
+//   } catch (err) {
+//     console.error(err.message);
+//     res.status(500).send("Server Error");
+//   }
+// });
 
 module.exports = router;
