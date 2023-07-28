@@ -128,7 +128,7 @@ router.get("/:userid", async (req, res) => {
 
 
 //search by name[get route]
-router.get("/:userName", async (req, res) => {
+router.get("/username/:userName", async (req, res) => {
   try {
     const { userName } = req.params;
 
