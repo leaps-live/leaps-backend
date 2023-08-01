@@ -50,10 +50,17 @@ router.delete("/delete", async (req, res) => {
   try {
     const { teamid, userid } = req.body;
 
-    //if the user deleted is the captain
-    //auto transfer to a random play in this team
-    const randomPlayer = await pool.query(
-      "SELECT userid \
+    //check whether if this user is a captain
+    const checkRole = pool.query(
+      "SELECT userRole FROM tbl_team_players WHERE teamid = $1 AND userid = $2",
+      [teamid, userid]
+    );
+
+    if (checkRole.rows[0].userRole === TRUE) {
+      //if the user deleted is the captain
+      //auto transfer to a random play in this team
+      const randomPlayer = await pool.query(
+        "SELECT userid \
     FROM ( \
         SELECT userid \
         FROM tbl_team_players \
@@ -61,14 +68,15 @@ router.delete("/delete", async (req, res) => {
     ) AS subquery \
     ORDER BY RANDOM() \
     LIMIT 1; ",
-      [teamid]
-    );
+        [teamid]
+      );
 
-    //male this player captain
-    const newCaptain = await pool.query(
-      "SET userRole = $1 FROM tbl_team_players WHERE teamid = $1 AND userid = $2",
-      [TRUE, teamid, randomPlayer]
-    );
+      //male this player captain
+      const newCaptain = await pool.query(
+        "SET userRole = $1 FROM tbl_team_players WHERE teamid = $1 AND userid = $2",
+        [TRUE, teamid, randomPlayer]
+      );
+    }
 
     //delete a player from a team
     const deletePlayer = await pool.query(
