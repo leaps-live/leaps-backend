@@ -101,6 +101,7 @@ router.get("/", async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
+
 //5. delete a team
 //we need to go through all players in the bridge table
 //and I do not know how to get it all done
