@@ -173,7 +173,7 @@ router.get("/username/:userName", async (req, res) => {
 });
 
 //edit user profile
-router.put("/:userid", async (req, res) => {
+router.put("/put/:userid", async (req, res) => {
   try {
     const { userid } = req.params;
 
