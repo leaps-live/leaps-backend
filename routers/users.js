@@ -180,7 +180,10 @@ router.put("/:userid", async (req, res) => {
     const { userBirthday, userHeight, userWeight } = req.body;
 
     const editRegularProfile = pool.query(
-      "SET userBirthday = $1, userHeight = $2, userWeight = $3 FROM tbl_user WHERE userid = $4 RETURNING *",
+      "UPDATE tbl_user \
+      SET userBirthday = $1, userHeight = $2, userWeight = $3 \
+      WHERE userid = $4 \
+      RETURNING *",
       [userBirthday, userHeight, userWeight, userid]
     );
 
