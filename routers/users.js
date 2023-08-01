@@ -75,7 +75,7 @@ router.post("/login", async (req, res) => {
 });
 
 //loging by username
-router.post("/login/username", async (req, res) => {
+router.post("/username/login", async (req, res) => {
   try {
     const { username, userPassword } = req.body;
 
