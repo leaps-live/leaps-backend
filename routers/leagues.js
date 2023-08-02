@@ -25,7 +25,7 @@ router.post("/register", async (req, res) => {
 
     const defaultAdmin = await pool.query(
       "UPDATE tbl_league SET leagueAdmin = ARRAY_APPEND(leagueAdmin, $1) WHERE leagueName = $2",
-      [userid, leagueName]
+      [userId, leagueName]
     );
 
     res.json(newLeague.rows[0]);

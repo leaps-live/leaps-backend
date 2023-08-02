@@ -172,27 +172,22 @@ router.get("/username/:userName", async (req, res) => {
   }
 });
 
-//edit user profile
+// edit user profile
 router.put("/put/:userid", async (req, res) => {
   try {
     const { userid } = req.params;
-
     const { userBirthday, userHeight, userWeight } = req.body;
 
-    const editRegularProfile = pool.query(
-      "UPDATE tbl_user \
-      SET userBirthday = $1, userHeight = $2, userWeight = $3 \
-      WHERE userid = $4 \
-      RETURNING *",
+    const editRegularProfile = await pool.query(
+      "UPDATE tbl_user SET userBirthday = $1, userHeight = $2, userWeight = $3 WHERE userid = $4 RETURNING *",
       [userBirthday, userHeight, userWeight, userid]
     );
 
     res.json(editRegularProfile.rows[0]);
-  } catch (err) {
-    console.error(err.message);
+  } catch (error) {
+    console.error(error.message);
     res.status(500).send("Server Error");
   }
 });
-
 
 module.exports = router;
