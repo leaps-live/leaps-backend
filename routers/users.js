@@ -49,57 +49,84 @@ router.post("/register", async (req, res) => {
 
 // User Log in
 router.post("/login", async (req, res) => {
-  const { userEmail, userPassword } = req.body;
+  const { userEmail, userName, userPassword } = req.body;
 
   try {
-    const user = await pool.query(
-      "SELECT * FROM tbl_user WHERE userEmail = $1",
-      [userEmail]
-    );
+    if (userEmail) {
+      const userEmailResult = await pool.query(
+        "SELECT * FROM tbl_user WHERE useremail = $1",
+        [userEmail]
+      );
 
-    if (user.rows.length === 0) {
-      console.log("wrong email");
-      return res.status(401).json("Invalid Credentials");
+      console.log(userEmailResult.rows[0]);
+
+      if (userEmailResult.rows.length === 0) {
+        console.log("wrong email");
+        return res.status(401).json("Invalid Email");
+      }
+
+      if (userEmailResult.rows[0].userpassword !== userPassword) {
+        console.log("wrong password");
+        return res.status(401).json("Incorrect Password");
+      }
+
+      return res.json(userEmailResult.rows[0]);
     }
 
-    if (user.rows[0].userPassword !== userPassword) {
-      console.log("wrong password");
-      return res.status(401).json("Invalid Credential");
+    if (userName) {
+      const userNameResult = await pool.query(
+        "SELECT * FROM tbl_user WHERE username = $1",
+        [userName]
+      );
+
+      if (userNameResult.rows.length === 0) {
+        console.log("wrong email");
+        return res.status(401).json("Invalid Username");
+      }
+
+      if (userNameResult.rows[0].userpassword !== userPassword) {
+        console.log("wrong password");
+        return res.status(401).json("Incorrect Password");
+      }
+
+      return res.json(userNameResult.rows[0]);
     }
 
-    return res.json(user.rows[0]);
+    if (!userEmail && !userName) {
+      return res.status(401).json("Both are empty");
+    }
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");
   }
 });
 
-//loging by username
-router.post("/username/login", async (req, res) => {
-  try {
-    const { username, userPassword } = req.body;
+// //loging by username
+// router.post("/username/login", async (req, res) => {
+//   try {
+//     const { username, userPassword } = req.body;
 
-    const user = await pool.query(
-      "SELECT * FROM tbl_user WHERE username = $1",
-      [username]
-    );
+//     const user = await pool.query(
+//       "SELECT * FROM tbl_user WHERE username = $1",
+//       [username]
+//     );
 
-    if (user.rows.length === 0) {
-      console.log("wrong username");
-      return res.status(401).json("Invalid Credentials");
-    }
+//     if (user.rows.length === 0) {
+//       console.log("wrong username");
+//       return res.status(401).json("Invalid Credentials");
+//     }
 
-    if (user.rows[0].userPassword !== userPassword) {
-      console.log("wrong password");
-      return res.status(401).json("Invalid Credential");
-    }
+//     // if (user.rows[0].userPassword !== userPassword) {
+//     //   console.log("wrong password");
+//     //   return res.status(401).json("Invalid Credential");
+//     // }
 
-    return res.json(user.rows[0]);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server error");
-  }
-});
+//     return res.json(user.rows[0]);
+//   } catch (err) {
+//     console.error(err.message);
+//     res.status(500).send("Server error");
+//   }
+// });
 
 //Delete a user by userid
 router.delete("/:userid", async (req, res) => {
