@@ -37,10 +37,12 @@ router.post("/create", async (req, res) => {
     );
 
     //get the teamid
-    const teamid = await pool.query(
+    const getTeamid = await pool.query(
       "SELECT teamid FROM tbl_team WHERE teamName = $1",
       [teamName]
     );
+
+    const teamid = getTeamid.rows[0].teamid;
 
     //insert the first records into the tbl_team_players
     const createTeamPlayer = await pool.query(
@@ -87,7 +89,7 @@ router.put("/:teamid/update", async (req, res) => {
 //3. get teamname(leave for future)
 
 //4. get teamid
-router.get("/", async (req, res) => {
+router.get("/getid", async (req, res) => {
   try {
     const { teamName } = req.body;
 
