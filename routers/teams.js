@@ -32,7 +32,7 @@ router.post("/create", async (req, res) => {
 
     //create the new team
     const createTeam = await pool.query(
-      "INSERT INTO tbl_team (teamCategories,teamName,teamDescription,teamCreator,teamCreateDate) VALUES ($1, $2, $3, $4, $5）RETURNING *",
+      "INSERT INTO tbl_team (teamCategories,teamName,teamDescription,teamCreator,teamCreateDate) VALUES ($1, $2, $3, $4, $5) RETURNING *",
       [teamCategories, teamName, teamDescription, teamCreator, teamCreateDate]
     );
 
