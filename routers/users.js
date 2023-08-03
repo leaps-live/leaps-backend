@@ -101,33 +101,6 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// //loging by username
-// router.post("/username/login", async (req, res) => {
-//   try {
-//     const { username, userPassword } = req.body;
-
-//     const user = await pool.query(
-//       "SELECT * FROM tbl_user WHERE username = $1",
-//       [username]
-//     );
-
-//     if (user.rows.length === 0) {
-//       console.log("wrong username");
-//       return res.status(401).json("Invalid Credentials");
-//     }
-
-//     // if (user.rows[0].userPassword !== userPassword) {
-//     //   console.log("wrong password");
-//     //   return res.status(401).json("Invalid Credential");
-//     // }
-
-//     return res.json(user.rows[0]);
-//   } catch (err) {
-//     console.error(err.message);
-//     res.status(500).send("Server error");
-//   }
-// });
-
 //Delete a user by userid
 router.delete("/:userid", async (req, res) => {
   try {
