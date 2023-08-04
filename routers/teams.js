@@ -5,14 +5,14 @@ const pool = require("../db");
 //test for francis
 router.post("/test", async (req, res) => {
   try {
-      let num = req.body;
+    let num = req.body;
 
-      res.json(num++);
-  } catch(error) { 
+    res.json(num++);
+  } catch (error) {
     console.error(error.message);
     res.status(500).send("Server Error");
   }
-})
+});
 
 //1. create a team with basic info
 router.post("/create", async (req, res) => {
@@ -37,17 +37,17 @@ router.post("/create", async (req, res) => {
     );
 
     //get the teamid
-    const getTeamid = await pool.query(
+    const teamid = await pool.query(
       "SELECT teamid FROM tbl_team WHERE teamName = $1",
       [teamName]
     );
 
-    const teamid = getTeamid.rows[0].teamid;
+    console.log("team id:", teamid.rows[0].teamid);
 
     //insert the first records into the tbl_team_players
     const createTeamPlayer = await pool.query(
-      "INSERT INTO tbl_team_players (teamid, userid, userRole) VALUES ($1, $2, $3) RETURNING *",
-      [teamid, teamCreator, true]
+      "INSERT INTO tbl_team_players (teamid, userid, isCreator) VALUES ($1, $2, $3) RETURNING *",
+      [teamid.rows[0].teamid, teamCreator, true]
     );
 
     res.json("Successfully create a new team");
