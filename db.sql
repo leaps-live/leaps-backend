@@ -60,7 +60,9 @@ CREATE TABLE tbl_game (
   teamB_score INT NOT NULL DEFAULT 0,
   isStart BOOLEAN NOT NULL DEFAULT FALSE,
   isEnd BOOLEAN NOT NULL DEFAULT FALSE,
-  recordingurl VARCHAR
+  recordingurl VARCHAR,
+  numberOfQuarters INT NOT NULL DEFAULT 1,
+  minutesPerQuarter INT NOT NULL DEFAULT 5,
 );
 
 CREATE TABLE tbl_game_league (
@@ -114,6 +116,11 @@ INSERT INTO tbl_user (userFormalName, username, userEmail, userPassword, userBir
 CREATE TABLE tbl_user_Type (
     user_typeid UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
     user_type VARCHAR(55) NOT NULL,
+)
+
+CREATE TABLE tbl_league_Type (
+     league_typeid UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
+     league_type VARCHAR(55) NOT NULL,
 )
 
 
