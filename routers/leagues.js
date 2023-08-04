@@ -23,6 +23,11 @@ router.post("/register", async (req, res) => {
       [leagueName, leagueDescription, userId, leagueCategories]
     );
 
+    const defaultAdmin = await pool.query(
+      "UPDATE tbl_league SET leagueAdmin = ARRAY_APPEND(leagueAdmin, $1) WHERE leagueName = $2",
+      [userId, leagueName]
+    );
+
     res.json(newLeague.rows[0]);
   } catch (err) {
     console.error(err.message);
@@ -104,8 +109,71 @@ router.put("/:leagueid", async (req, res) => {
   }
 });
 
-// TODO: Add League Admin
+//Add League Admin
+router.put("/:leagueid/add/admin", async (req, res) => {
+  try {
+    const { leagueid } = req.params;
+    const { userid } = req.body;
 
-// TODO: Delete Specific League Admin
+    const addAdmin = await pool.query(
+      "UPDATE tbl_league SET leagueAdmin = ARRAY_APPEND(leagueAdmin, $1) WHERE leagueid= $2",
+      [userid, leagueid]
+    );
+
+    res.json("Successfully add a new admin");
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+//Delete Specific League Admin
+router.put("/:leagueid/delete/admin", async (req, res) => {
+  try {
+    const { leagueid } = req.params;
+    const { userid } = req.body;
+
+    //get all the leagueAdmin
+    const getLeagueAdmin = await pool.query(
+      "SELETE leagueAdmin FROM tbl_league WHERE leagueid = $1",
+      [leagueid]
+    );
+    console.log(getLeagueAdmin.rows[0].leagueAdmin);
+
+    //filter the leagueAdmin and delete the specific userid
+    const newLeagueAdmin = getLeagueAdmin.rows[0].leagueAdmin.filter(
+      (user) => JSON.parse(user).userid != userid
+    );
+    console.log(newLeagueAdmin);
+
+    //insert the new leagueAdmin back to tbl_league
+    const resultLeagueAdmin = await pool.query(
+      "UPDATE tbl_league SET leagueAdmin = $1 WHERE leagueid = $2 RETURNING *",
+      [newLeagueAdmin, leagueid]
+    );
+
+    res.json("Successfully delete the user from leagueAdmin");
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+//delete a league
+router.delete("/:leagueid", async (req, res) => {
+  try {
+    const { leagueid } = req.params;
+
+    const deleteLeague = await pool.query(
+      "DELETE FROM tbl_league WHERE leagueid = $1",
+      [leagueid]
+    );
+
+    res.json("Successfully deleted the league");
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+});
 
 module.exports = router;
