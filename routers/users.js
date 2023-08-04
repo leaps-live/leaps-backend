@@ -172,6 +172,33 @@ router.get("/username/:userName", async (req, res) => {
   }
 });
 
+// get user's username
+router.get("/:userid/username", async (req, res) => {
+  try {
+    const { userid } = req.params;
+
+    //check whether user exist
+    const user = await pool.query("SELECT * FROM tbl_user WHERE userId = $1", [
+      userid,
+    ]);
+
+    if (user.rows.length === 0) {
+      return res.status(401).json("User does not exist...");
+    }
+
+    //get the user info
+    const getUserInfo = await pool.query(
+      "SELECT username FROM tbl_user WHERE userId = $1",
+      [userid]
+    );
+
+    res.json(getUserInfo.rows[0].username);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
 // edit user profile
 router.put("/put/:userid", async (req, res) => {
   try {
