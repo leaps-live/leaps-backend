@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const pool = require("../db");
+const moment = require("moment");
 
 //test for francis
 router.post("/test", async (req, res) => {
@@ -18,7 +19,8 @@ router.post("/test", async (req, res) => {
 router.post("/create", async (req, res) => {
   try {
     const { teamCategories, teamName, teamDescription, teamCreator } = req.body;
-    const teamCreateDate = new Date().toLocaleString();
+    // const teamCreateDate = new Date().toLocaleString();
+    const teamCreateDate = moment().format("YYYY-MM-DD"); // 2023-08-03T19:06:46-07:00
 
     //check the team name has been taken or not
     const checkTeamName = await pool.query(
