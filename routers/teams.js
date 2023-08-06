@@ -114,12 +114,30 @@ router.delete("/:teamid", async (req, res) => {
   try {
     const { teamid } = req.params;
 
-    const deleteTeam = pool.query(
+    const deleteTeam = await pool.query(
       "DELETE FROM tbl_team WHERE teamid = $1 RETURNING *",
       [teamid]
     );
 
     res.json("Successfully action");
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+router.post("/search/teamname", async (req, res) => {
+  try {
+    const { teamname } = req.body;
+
+    let editedTeamName = teamname + "%";
+
+    const searchTeam = await pool.query(
+      "SELECT * FROM tbl_team WHERE teamname ilike $1",
+      [editedTeamName]
+    );
+
+    res.json(searchTeam.rows);
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server Error");

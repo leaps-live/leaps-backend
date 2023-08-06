@@ -176,4 +176,22 @@ router.delete("/:leagueid", async (req, res) => {
   }
 });
 
+router.post("/search/leaguename", async (req, res) => {
+  try {
+    const { leaguename } = req.body;
+
+    let editedLeagueName = leaguename + "%";
+
+    const searchLeague = await pool.query(
+      "SELECT * FROM tbl_league WHERE leaguename ilike $1",
+      [editedLeagueName]
+    );
+
+    res.json(searchLeague.rows);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+});
+
 module.exports = router;
