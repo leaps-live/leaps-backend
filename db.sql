@@ -104,8 +104,7 @@ CREATE TABLE tbl_game_user (
 );
 
 -- Example Data Insert for tbl_user
-INSERT INTO tbl_user (userFormalName, username, userEmail, userPassword, userBirthday, userHeight, userWeight) VALUES ('Julius Cecilia', 'juliuscecilia33', 'juliuscecilia33@gmail.com', 'asdfasdf', '05/30/2002','5','135');
-
+INSERT INTO tbl_user (userFirstName, userLastName, username, userEmail, userPassword, userBirthday, userHeight, userWeight) VALUES ('Julius', 'Cecilia', 'juliuscecilia33', 'juliuscecilia33@gmail.com', 'asdfasdf', '05/30/2002','5','135');
 
 
 -- The tables below this line have not been added to our AWS Postgres DB yet...
