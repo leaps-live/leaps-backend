@@ -1,0 +1,138 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model tbl_game {
+  gameid                            String            @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  gamename                          String            @db.VarChar(30)
+  teama                             String            @db.Uuid
+  teamb                             String            @db.Uuid
+  leagueid                          String            @db.Uuid
+  starttime                         DateTime?         @db.Timestamp(6)
+  endtime                           DateTime?         @db.Timestamp(6)
+  teama_score                       Int               @default(0)
+  teamb_score                       Int               @default(0)
+  isstart                           Boolean           @default(false)
+  isend                             Boolean           @default(false)
+  recordingurl                      String?           @db.VarChar
+  numberofquarters                  Int               @default(1)
+  minutesperquarter                 Int               @default(5)
+  tbl_league                        tbl_league        @relation(fields: [leagueid], references: [leagueid], onDelete: Cascade, onUpdate: NoAction)
+  tbl_team_tbl_game_teamaTotbl_team tbl_team          @relation("tbl_game_teamaTotbl_team", fields: [teama], references: [teamid], onDelete: Cascade, onUpdate: NoAction)
+  tbl_team_tbl_game_teambTotbl_team tbl_team          @relation("tbl_game_teambTotbl_team", fields: [teamb], references: [teamid], onDelete: Cascade, onUpdate: NoAction)
+  tbl_game_league                   tbl_game_league[]
+  tbl_game_team                     tbl_game_team[]
+  tbl_game_user                     tbl_game_user[]
+}
+
+model tbl_game_league {
+  game_leagueid String     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  gameid        String     @db.Uuid
+  leagueid      String     @db.Uuid
+  tbl_game      tbl_game   @relation(fields: [gameid], references: [gameid], onDelete: Cascade, onUpdate: NoAction)
+  tbl_league    tbl_league @relation(fields: [leagueid], references: [leagueid], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model tbl_game_team {
+  game_teamid String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  teamid      String   @db.Uuid
+  gameid      String   @db.Uuid
+  score       Int      @default(0)
+  assists     Int      @default(0)
+  blocks      Int      @default(0)
+  rebounds    Int      @default(0)
+  steals      Int      @default(0)
+  turnovers   Int      @default(0)
+  fouls       Int      @default(0)
+  tbl_game    tbl_game @relation(fields: [gameid], references: [gameid], onDelete: Cascade, onUpdate: NoAction)
+  tbl_team    tbl_team @relation(fields: [teamid], references: [teamid], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model tbl_game_user {
+  game_userid         String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  userid              String   @db.Uuid
+  gameid              String   @db.Uuid
+  score               Int      @default(0)
+  assists             Int      @default(0)
+  blocks              Int      @default(0)
+  rebounds            Int      @default(0)
+  steals              Int      @default(0)
+  turnovers           Int      @default(0)
+  fouls               Int      @default(0)
+  fieldgoalmade       Int      @default(0)
+  fieldgoalattempted  Int      @default(0)
+  threepointmade      Int      @default(0)
+  threepointattempted Int      @default(0)
+  ftmade              Int      @default(0)
+  ftattempted         Int      @default(0)
+  tbl_game            tbl_game @relation(fields: [gameid], references: [gameid], onDelete: Cascade, onUpdate: NoAction)
+  tbl_user            tbl_user @relation(fields: [userid], references: [userid], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model tbl_league {
+  leagueid          String            @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  leaguedescription String?           @db.VarChar
+  leaguecreator     String            @db.Uuid
+  leagueadmin       String[]
+  leaguecategories  String[]
+  leaguename        String            @unique @db.VarChar(105)
+  tbl_game          tbl_game[]
+  tbl_game_league   tbl_game_league[]
+  tbl_user          tbl_user          @relation(fields: [leaguecreator], references: [userid], onDelete: Cascade, onUpdate: NoAction)
+  tbl_team_league   tbl_team_league[]
+}
+
+model tbl_team {
+  teamid                            String             @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  teamcreatedate                    DateTime           @db.Date
+  teamdescription                   String             @db.VarChar
+  teamcreator                       String             @db.Uuid
+  teamname                          String             @unique @db.VarChar(25)
+  teamcategories                    String[]
+  tbl_game_tbl_game_teamaTotbl_team tbl_game[]         @relation("tbl_game_teamaTotbl_team")
+  tbl_game_tbl_game_teambTotbl_team tbl_game[]         @relation("tbl_game_teambTotbl_team")
+  tbl_game_team                     tbl_game_team[]
+  tbl_user                          tbl_user           @relation(fields: [teamcreator], references: [userid], onDelete: Cascade, onUpdate: NoAction)
+  tbl_team_league                   tbl_team_league[]
+  tbl_team_players                  tbl_team_players[]
+}
+
+model tbl_team_league {
+  teamleagueid   String     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  teamid         String     @db.Uuid
+  leagueid       String     @db.Uuid
+  teamcategories String[]
+  tbl_league     tbl_league @relation(fields: [leagueid], references: [leagueid], onDelete: Cascade, onUpdate: NoAction)
+  tbl_team       tbl_team   @relation(fields: [teamid], references: [teamid], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model tbl_team_players {
+  teamplayersid String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  teamid        String   @db.Uuid
+  userid        String   @db.Uuid
+  iscreator     Boolean  @default(false)
+  tbl_team      tbl_team @relation(fields: [teamid], references: [teamid], onDelete: Cascade, onUpdate: NoAction)
+  tbl_user      tbl_user @relation(fields: [userid], references: [userid], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model tbl_user {
+  userid           String             @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  userpassword     String             @db.VarChar(25)
+  userbirthday     String             @db.VarChar
+  userheight       Decimal?           @db.Decimal
+  userweight       Decimal?           @db.Decimal
+  usercoins        Int                @default(0)
+  userfirstname    String             @db.VarChar(55)
+  userlastname     String             @db.VarChar(55)
+  username         String             @unique @db.VarChar(105)
+  useremail        String             @unique @db.VarChar(40)
+  tbl_game_user    tbl_game_user[]
+  tbl_league       tbl_league[]
+  tbl_team         tbl_team[]
+  tbl_team_players tbl_team_players[]
+}

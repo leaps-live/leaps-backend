@@ -1,6 +1,7 @@
-const express = require("express");
+import express from "express";
+import { pool } from "../db";
+
 const router = express.Router();
-const pool = require("../db");
 
 // Create New Game
 router.post("/new", async (req, res) => {

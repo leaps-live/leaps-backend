@@ -1,14 +1,16 @@
-const express = require("express");
+import express from "express";
+import { pool } from "../db";
+import moment from "moment";
+
 const router = express.Router();
-const pool = require("../db");
-const moment = require("moment");
+
 
 //test for francis
 router.post("/test", async (req, res) => {
   try {
-    let num = req.body;
+    let body = req.body;
 
-    res.json(num++);
+    res.json(body);
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server Error");

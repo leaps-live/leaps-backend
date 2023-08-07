@@ -1,6 +1,8 @@
-const express = require("express");
+import express from "express";
+import { pool } from "../db";
+import moment from "moment";
+
 const router = express.Router();
-const pool = require("../db");
 
 //1.when a team is create
 //the creator automatically become the first player
