@@ -221,7 +221,7 @@ router.post("/search/username", async (req, res) => {
   try {
     const { userinput } = req.body;
 
-    let editedUserInput = userinput + "%";
+    let editedUserInput = "%" + userinput + "%";
 
     const searchUser = await pool.query(
       "SELECT * FROM tbl_user WHERE (userFirstName ilike $1) OR (userLastName ilike $1) OR (username like $1)",
