@@ -93,7 +93,7 @@ model tbl_team {
   teamdescription                   String             @db.VarChar
   teamcreator                       String             @db.Uuid
   teamname                          String             @unique @db.VarChar(25)
-  teamcategories                    String[]
+  teamcategories                    String
   tbl_game_tbl_game_teamaTotbl_team tbl_game[]         @relation("tbl_game_teamaTotbl_team")
   tbl_game_tbl_game_teambTotbl_team tbl_game[]         @relation("tbl_game_teambTotbl_team")
   tbl_game_team                     tbl_game_team[]

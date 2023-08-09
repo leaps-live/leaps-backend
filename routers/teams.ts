@@ -1,9 +1,9 @@
 import express from "express";
-import { pool } from "../db";
+import { getPool } from "../db";
 import moment from "moment";
 
 const router = express.Router();
-
+const pool = getPool();
 
 //test for francis
 router.post("/test", async (req, res) => {
@@ -17,12 +17,13 @@ router.post("/test", async (req, res) => {
   }
 });
 
-//1. create a team with basic info
+// 1. create a team with basic info
 router.post("/create", async (req, res) => {
   try {
+    console.log("route: create a team");
     const { teamCategories, teamName, teamDescription, teamCreator } = req.body;
     // const teamCreateDate = new Date().toLocaleString();
-    const teamCreateDate = moment().format("YYYY-MM-DD"); // 2023-08-03T19:06:46-07:00
+    const teamCreateDate = moment().format(); // 2023-08-03T19:06:46-07:00
 
     //check the team name has been taken or not
     const checkTeamName = await pool.query(
@@ -31,12 +32,15 @@ router.post("/create", async (req, res) => {
     );
 
     if (checkTeamName.rows.length !== 0) {
-      return res.status(401).json("This team name has already been taken...");
+      return res.status(409).json({
+        message: "This team name has already been taken...",
+        statusCode: 409,
+      });
     }
 
     //create the new team
     const createTeam = await pool.query(
-      "INSERT INTO tbl_team (teamCategories,teamName,teamDescription,teamCreator,teamCreateDate) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      "INSERT INTO tbl_team (teamcategories,teamname,teamDescription,teamcreator,teamcreatedate) VALUES ($1, $2, $3, $4, $5) RETURNING *",
       [teamCategories, teamName, teamDescription, teamCreator, teamCreateDate]
     );
 
@@ -54,7 +58,11 @@ router.post("/create", async (req, res) => {
       [teamid.rows[0].teamid, teamCreator, true]
     );
 
-    res.json("Successfully create a new team");
+    res.json({
+      message: "Successfully create a new team",
+      statusCode: 200,
+      teamId: teamid.rows[0].teamid,
+    });
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server Error");
