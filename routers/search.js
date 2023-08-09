@@ -24,9 +24,15 @@ router.post("/all", async (req, res) => {
       [editedUserInput]
     );
 
+    const searchGame = await pool.query(
+      "SELECT * FROM tbl_game WHERE gamename ilike $1",
+      [editedUserInput]
+    );
+
     combinedOutput.teams = searchTeam.rows;
     combinedOutput.users = searchUser.rows;
     combinedOutput.leagues = searchLeague.rows;
+    combinedOutput.games = searchGame.rows;
 
     console.log("combinedOutput", combinedOutput);
 
