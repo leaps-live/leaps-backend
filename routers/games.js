@@ -139,4 +139,22 @@ router.put("/:gameid", async (req, res) => {
   }
 });
 
+router.post("/search/gamename", async (req, res) => {
+  try {
+    const { gameName } = req.body;
+
+    let editedGameName = "%" + gameName + "%";
+
+    const searchGame = await pool.query(
+      "SELECT * FROM tbl_game WHERE gamename ilike $1",
+      [editedGameName]
+    );
+
+    res.json(searchGame.rows);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+});
+
 module.exports = router;
