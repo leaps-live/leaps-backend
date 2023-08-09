@@ -180,7 +180,7 @@ router.post("/search/leaguename", async (req, res) => {
   try {
     const { leaguename } = req.body;
 
-    let editedLeagueName = leaguename + "%";
+    let editedLeagueName = "%" + leaguename + "%";
 
     const searchLeague = await pool.query(
       "SELECT * FROM tbl_league WHERE leaguename ilike $1",
