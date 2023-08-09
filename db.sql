@@ -63,6 +63,9 @@ CREATE TABLE tbl_game (
   recordingurl VARCHAR,
   numberOfQuarters INT NOT NULL DEFAULT 1,
   minutesPerQuarter INT NOT NULL DEFAULT 5,
+  teamaname VARCHAR,
+  teambname VARCHAR,
+  leaguename VARCHAR
 );
 
 CREATE TABLE tbl_game_league (
