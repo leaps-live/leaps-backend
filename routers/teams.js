@@ -144,4 +144,33 @@ router.post("/search/teamname", async (req, res) => {
   }
 });
 
+//based on the userid to get user's teams
+router.get("/getTeam/:userid", async (req, res) => {
+  try {
+    const { userid } = req.params;
+
+    const getAllTeam = await pool.query(
+      "SELECT * FROM tbl_team_players WHERE userid = $1",
+      [userid]
+    );
+
+    const teamIds = getAllTeam.rows.map((item) => item.teamid);
+
+    const teamInfo = [];
+
+    for (const teamid of teamIds) {
+      const teaminfo = await pool.query(
+        "SELECT * FROM tbl_team WHERE teamid = $1",
+        [teamid]
+      );
+      teamInfo.push(teaminfo.rows);
+    }
+
+    res.json(teamInfo.flat());
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+});
+
 module.exports = router;
