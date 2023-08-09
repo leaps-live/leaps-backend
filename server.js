@@ -35,5 +35,6 @@ app.use("/leagueteam", require("./routers/leagueteam"));
 app.use("/game", require("./routers/games"));
 app.use("/team", require("./routers/teams"));
 app.use("/teamplayer", require("./routers/teamplayer"));
+app.use("/search", require("./routers/search"));
 
 app.listen(8080, () => console.log("Server listening on port 8080"));
