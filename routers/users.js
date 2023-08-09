@@ -210,6 +210,8 @@ router.put("/put/:userid", async (req, res) => {
       [userBirthday, userHeight, userWeight, userid]
     );
 
+    console.log("editRegularProfile", editRegularProfile);
+
     res.json(editRegularProfile.rows[0]);
   } catch (error) {
     console.error(error.message);

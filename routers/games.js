@@ -14,10 +14,13 @@ router.post("/new", async (req, res) => {
       endTime,
       numberOfQuarters,
       minutesPerQuarter,
+      teamAname,
+      teamBname,
+      leagueName,
     } = req.body;
 
     let newGane = await pool.query(
-      "INSERT INTO tbl_game (gameName, teamA, teamB, leagueid, startTime, endTime, numberOfQuarters, minutesPerQuarter) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
+      "INSERT INTO tbl_game (gameName, teamA, teamB, leagueid, startTime, endTime, numberOfQuarters, minutesPerQuarter, teamaname, teambname, leaguename) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *",
       [
         gameName,
         teamA,
@@ -27,6 +30,9 @@ router.post("/new", async (req, res) => {
         endTime,
         numberOfQuarters,
         minutesPerQuarter,
+        teamAname,
+        teamBname,
+        leagueName,
       ]
     );
 
@@ -133,6 +139,24 @@ router.put("/:gameid", async (req, res) => {
     );
 
     res.json(updateGame.rows[0]);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+router.post("/search/gamename", async (req, res) => {
+  try {
+    const { userInput } = req.body;
+
+    let editedUserInput = "%" + userInput + "%";
+
+    const searchGame = await pool.query(
+      "SELECT * FROM tbl_game WHERE (gamename ilike $1) OR (teamaname ilike $1) OR (teambname ilike $1) OR (leaguename ilike $1)",
+      [editedUserInput]
+    );
+
+    res.json(searchGame.rows);
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server Error");
