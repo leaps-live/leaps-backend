@@ -237,4 +237,33 @@ router.post("/search/username", async (req, res) => {
   }
 });
 
+// Returns true if a user is an owner of a league or creator of a team
+router.get("/isowner/:userid", async (req, res) => {
+  try {
+    const { userid } = req.params;
+
+    // check whether the user is a creator of a team
+    const teamCheck = await pool.query(
+      "SELECT * FROM tbl_team WHERE teamcreator = $1",
+      [userid]
+    );
+
+    // check whether the user is a owner of a team
+
+    const leagueCheck = await pool.query(
+      "SELECT * FROM tbl_league WHERE leaguecreator = $1",
+      [userid]
+    );
+
+    if (teamCheck.rows.length === 0 || leagueCheck.rows.length === 0) {
+      return res.json(false);
+    }
+
+    res.json(true);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
 module.exports = router;
