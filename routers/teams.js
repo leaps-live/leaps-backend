@@ -126,4 +126,18 @@ router.delete("/:teamid", async (req, res) => {
   }
 });
 
+//get all team info
+router.get("/get/:teamid", async (req, res) => {
+  try {
+    const {teamid} = req.params;
+
+    const getAllInfo = await pool.query("SELECT * FROM tbl_team WHERE teamid = $1", [teamid]);
+
+    res.json(getAllInfo.rows[0])
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+})
+
 module.exports = router;

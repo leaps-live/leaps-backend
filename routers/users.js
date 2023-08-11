@@ -227,17 +227,19 @@ router.get("/getTeam/:userid", async (req, res) => {
       [userid]
     );
 
-    const teamIds = getAllTeam.rows.map(item => item.teamid);
+    const teamIds = getAllTeam.rows.map((item) => item.teamid);
 
     const teamInfo = [];
 
-    for(const teamid of teamIds) {
-      const teaminfo = await pool.query("SELECT * FROM tbl_team WHERE teamid = $1", [teamid]);
+    for (const teamid of teamIds) {
+      const teaminfo = await pool.query(
+        "SELECT * FROM tbl_team WHERE teamid = $1",
+        [teamid]
+      );
       teamInfo.push(teaminfo.rows);
     }
 
-    res.json(teamInfo);
-    
+    res.json(teamInfo.flat());
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server Error");
@@ -254,16 +256,19 @@ router.get("/getLeague/:userid", async (req, res) => {
       [userid]
     );
 
-    //use the return value from the get all team 
-    const teamIds = getAllTeam.rows.map(item => item.teamid);
+    //use the return value from the get all team
+    const teamIds = getAllTeam.rows.map((item) => item.teamid);
     //const leagueIds = [];
     const leagueInfo = [];
 
-    for(const teamid of teamIds) {
-      let leagueinfo = await pool.query("SELECT * FROM tbl_league l \
-      JOIN tbl_team_league tl ON tl.leagueid = l.leagueid  \
-      WHERE tl.teamid = $1", [teamid]);
-      leagueInfo.push(leagueinfo.rows);    
+    for (const teamid of teamIds) {
+      const leagueinfo = await pool.query(
+        "SELECT * FROM tbl_league l \
+      JOIN tbl_team_league tl ON l.leagueid = tl.leagueid  \
+      WHERE tl.teamid = $1",
+        [teamid]
+      );
+      leagueInfo.push(leagueinfo.rows);
     }
 
     //get all league info
