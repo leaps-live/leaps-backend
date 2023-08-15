@@ -91,9 +91,9 @@ router.put("/:teamid/update", async (req, res) => {
 //3. get teamname(leave for future)
 
 //4. get teamid
-router.get("/getid", async (req, res) => {
+router.get("/getid/:teamName", async (req, res) => {
   try {
-    const { teamName } = req.body;
+    const { teamName } = req.params;
 
     const getTeamid = await pool.query(
       "SELECT teamId FROM tbl_team WHERE teamName = $1 RETURNING *",
