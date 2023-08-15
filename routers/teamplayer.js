@@ -114,4 +114,21 @@ router.put("/:teamid/transfer", async (req, res) => {
   }
 });
 
+// Get all the players from a specific team
+router.get("/allplayers/:teamid", async (req, res) => {
+  try {
+    const { teamid } = req.params;
+
+    const getAllTeams = await pool.query(
+      "SELECT * FROM tbl_user JOIN tbl_team_players ON tbl_user.userid = tbl_team_players.userid WHERE tbl_team_players.teamid = $1",
+      [teamid]
+    );
+
+    res.json(getAllTeams.rows);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+});
+
 module.exports = router;
