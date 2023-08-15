@@ -144,4 +144,16 @@ router.post("/search/teamname", async (req, res) => {
   }
 });
 
+// route to get all teams
+router.get("/all", async (req, res) => {
+  try {
+    const getAllTeams = await pool.query("SELECT * FROM tbl_team");
+
+    res.json(getAllTeams.rows);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+});
+
 module.exports = router;
