@@ -144,10 +144,15 @@ router.post("/search/teamname", async (req, res) => {
   }
 });
 
-// route to get all teams
-router.get("/all", async (req, res) => {
+// route to get all teams from a specific league
+router.get("/all/:leagueid", async (req, res) => {
   try {
-    const getAllTeams = await pool.query("SELECT * FROM tbl_team");
+    const { leagueid } = req.params;
+
+    const getAllTeams = await pool.query(
+      "SELECT * FROM tbl_team JOIN tbl_team_league ON tbl_team.teamid = tbl_team_league.teamid WHERE tbl_team_league.leagueid = $1",
+      [leagueid]
+    );
 
     res.json(getAllTeams.rows);
   } catch (error) {
