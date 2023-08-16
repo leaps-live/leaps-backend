@@ -28,7 +28,7 @@ router.post("/register", async (req, res) => {
       [userId, leagueName]
     );
 
-    res.json(newLeague.rows[0]);
+    res.json(defaultAdmin.rows[0]);
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");

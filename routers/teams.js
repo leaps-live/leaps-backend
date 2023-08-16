@@ -67,21 +67,24 @@ router.put("/:teamid/update", async (req, res) => {
 
     //check whther the team name has already been taken
     const checkName = await pool.query(
-      "SELECT teamId FROM tbl_team WHERE teamName = $1",
+      "SELECT * FROM tbl_team WHERE teamName = $1",
       [teamName]
     );
 
-    if (checkName.rows[0] !== teamid) {
+    if (checkName.rows.length !== 0) {
       return res.status(401).json("This team name has already been taken...");
     }
 
     //update new info
-    const updateTeamInfo = await pool.query(
-      "UPDATE tbl_team SET teamName = $1, teamDescription = $2 RETURNING *",
-      [teamName, teamDescription]
-    );
+    if (checkName.rows.length === 0) {
+      const updateTeamInfo = await pool.query(
+        "UPDATE tbl_team SET teamName = $1, teamDescription = $2 RETURNING *",
+        [teamName, teamDescription]
+      );
 
-    res.json(updateTeamInfo.rows[0]);
+      res.json(updateTeamInfo.rows[0]);
+    }
+    
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server Error");
