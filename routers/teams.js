@@ -52,39 +52,57 @@ router.post("/create", async (req, res) => {
       [teamid.rows[0].teamid, teamCreator, true]
     );
 
-    res.json("Successfully create a new team");
+    res.json(teamid.rows[0].teamid);
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server Error");
   }
 });
 
-//2. update team regular info
-router.put("/:teamid/update", async (req, res) => {
+// edit team info
+router.put("/update/:teamid", async (req, res) => {
   try {
     const { teamid } = req.params;
     const { teamName, teamDescription } = req.body;
 
-    //check whther the team name has already been taken
-    const checkName = await pool.query(
-      "SELECT * FROM tbl_team WHERE teamName = $1",
-      [teamName]
+    let oldName = await pool.query(
+      "SELECT teamName FROM tbl_team WHERE teamid = $1",
+      [teamid]
     );
 
-    if (checkName.rows.length !== 0) {
-      return res.status(401).json("This team name has already been taken...");
-    }
+    console.log(oldName.rows[0]);
+    console.log(teamName);
 
-    //update new info
-    if (checkName.rows.length === 0) {
+    if (teamName === oldName.rows[0].teamname) {
       const updateTeamInfo = await pool.query(
-        "UPDATE tbl_team SET teamName = $1, teamDescription = $2 RETURNING *",
-        [teamName, teamDescription]
+        "UPDATE tbl_team SET teamDescription = $1 WHERE teamid = $2 RETURNING *",
+        [teamDescription, teamid]
       );
 
       res.json(updateTeamInfo.rows[0]);
     }
-    
+
+    if (teamName !== oldName.rows[0].teamname) {
+      //check whther the team name has already been taken
+      const checkName = await pool.query(
+        "SELECT * FROM tbl_team WHERE teamName = $1",
+        [teamName]
+      );
+
+      if (checkName.rows.length !== 0) {
+        return res.status(401).json("This team name has already been taken...");
+      }
+
+      //update new info
+      if (checkName.rows.length === 0) {
+        const updateTeamInfo = await pool.query(
+          "UPDATE tbl_team SET teamName = $1, teamDescription = $2 WHERE teamid = $3 RETURNING *",
+          [teamName, teamDescription, teamid]
+        );
+
+        res.json(updateTeamInfo.rows[0]);
+      }
+    }
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server Error");
