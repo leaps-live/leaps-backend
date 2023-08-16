@@ -52,36 +52,57 @@ router.post("/create", async (req, res) => {
       [teamid.rows[0].teamid, teamCreator, true]
     );
 
-    res.json("Successfully create a new team");
+    res.json(teamid.rows[0].teamid);
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server Error");
   }
 });
 
-//2. update team regular info
-router.put("/:teamid/update", async (req, res) => {
+// edit team info
+router.put("/update/:teamid", async (req, res) => {
   try {
     const { teamid } = req.params;
     const { teamName, teamDescription } = req.body;
 
-    //check whther the team name has already been taken
-    const checkName = await pool.query(
-      "SELECT teamId FROM tbl_team WHERE teamName = $1",
-      [teamName]
+    let oldName = await pool.query(
+      "SELECT teamName FROM tbl_team WHERE teamid = $1",
+      [teamid]
     );
 
-    if (checkName.rows[0] !== teamid) {
-      return res.status(401).json("This team name has already been taken...");
+    console.log(oldName.rows[0]);
+    console.log(teamName);
+
+    if (teamName === oldName.rows[0].teamname) {
+      const updateTeamInfo = await pool.query(
+        "UPDATE tbl_team SET teamDescription = $1 WHERE teamid = $2 RETURNING *",
+        [teamDescription, teamid]
+      );
+
+      res.json(updateTeamInfo.rows[0]);
     }
 
-    //update new info
-    const updateTeamInfo = await pool.query(
-      "UPDATE tbl_team SET teamName = $1, teamDescription = $2 RETURNING *",
-      [teamName, teamDescription]
-    );
+    if (teamName !== oldName.rows[0].teamname) {
+      //check whther the team name has already been taken
+      const checkName = await pool.query(
+        "SELECT * FROM tbl_team WHERE teamName = $1",
+        [teamName]
+      );
 
-    res.json(updateTeamInfo.rows[0]);
+      if (checkName.rows.length !== 0) {
+        return res.status(401).json("This team name has already been taken...");
+      }
+
+      //update new info
+      if (checkName.rows.length === 0) {
+        const updateTeamInfo = await pool.query(
+          "UPDATE tbl_team SET teamName = $1, teamDescription = $2 WHERE teamid = $3 RETURNING *",
+          [teamName, teamDescription, teamid]
+        );
+
+        res.json(updateTeamInfo.rows[0]);
+      }
+    }
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server Error");
@@ -91,9 +112,9 @@ router.put("/:teamid/update", async (req, res) => {
 //3. get teamname(leave for future)
 
 //4. get teamid
-router.get("/getid", async (req, res) => {
+router.get("/getid/:teamName", async (req, res) => {
   try {
-    const { teamName } = req.body;
+    const { teamName } = req.params;
 
     const getTeamid = await pool.query(
       "SELECT teamId FROM tbl_team WHERE teamName = $1 RETURNING *",
@@ -144,6 +165,22 @@ router.post("/search/teamname", async (req, res) => {
   }
 });
 
+//get all team info
+router.get("/get/:teamid", async (req, res) => {
+  try {
+    const {teamid} = req.params;
+
+    const getAllInfo = await pool.query("SELECT * FROM tbl_team WHERE teamid = $1", [teamid]);
+
+    res.json(getAllInfo.rows[0])
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+
+
 // route to get all teams from a specific league
 router.get("/all/:leagueid", async (req, res) => {
   try {
@@ -155,6 +192,36 @@ router.get("/all/:leagueid", async (req, res) => {
     );
 
     res.json(getAllTeams.rows);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+
+//based on the userid to get user's teams
+router.get("/getTeam/:userid", async (req, res) => {
+  try {
+    const { userid } = req.params;
+
+    const getAllTeam = await pool.query(
+      "SELECT * FROM tbl_team_players WHERE userid = $1",
+      [userid]
+    );
+
+    const teamIds = getAllTeam.rows.map((item) => item.teamid);
+
+    const teamInfo = [];
+
+    for (const teamid of teamIds) {
+      const teaminfo = await pool.query(
+        "SELECT * FROM tbl_team WHERE teamid = $1",
+        [teamid]
+      );
+      teamInfo.push(teaminfo.rows);
+    }
+
+    res.json(teamInfo.flat());
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server Error");

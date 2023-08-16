@@ -13,7 +13,7 @@ const pool = new Pool({
   database: "initial_leaps",
   host: process.env.DATABASE_HOST,
   port: 5432,
-  ssl: { rejectUnauthorized: false },
+  //ssl: { rejectUnauthorized: false },
 });
 
 const cors = require("cors");
