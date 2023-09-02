@@ -1,6 +1,7 @@
-const express = require("express");
+import express from "express";
+import { pool } from "../db";
+
 const router = express.Router();
-const pool = require("../db");
 
 // Register New League
 router.post("/register", async (req, res) => {

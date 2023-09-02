@@ -1,6 +1,8 @@
-const express = require("express");
+import express from "express";
+import { pool } from "../db";
+import moment from "moment";
+
 const router = express.Router();
-const pool = require("../db");
 
 //1.when a team is create
 //the creator automatically become the first player
@@ -114,6 +116,7 @@ router.put("/:teamid/transfer", async (req, res) => {
   }
 });
 
+<<<<<<< HEAD:routers/teamplayer.js
 // Get all the players from a specific team
 router.get("/allplayers/:teamid", async (req, res) => {
   try {
@@ -131,4 +134,6 @@ router.get("/allplayers/:teamid", async (req, res) => {
   }
 });
 
+=======
+>>>>>>> jeffrey:routers/teamplayer.ts
 module.exports = router;
