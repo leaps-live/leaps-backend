@@ -1,6 +1,7 @@
-const express = require("express");
+import express from "express";
+import { pool } from "../db";
+
 const router = express.Router();
-const pool = require("../db");
 
 // Register New League
 router.post("/register", async (req, res) => {
@@ -81,7 +82,7 @@ router.get("/:leagueid", async (req, res) => {
     //get the League info
     const getLeagueInfo = await pool.query(
       "SELECT * FROM tbl_league WHERE leagueId = $1",
-      [userid]
+      [leagueid]
     );
 
     res.json(getLeagueInfo.rows[0]);
