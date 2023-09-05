@@ -240,7 +240,7 @@ router.put("/changepassword/:userid", async (req, res) => {
 });
 
 // change user password by email
-router.put("/changepassword/:useremail", async (req, res) => {
+router.put("/changepassword/email/:useremail", async (req, res) => {
   try {
     const { useremail } = req.params;
     const { newPassword } = req.body;
