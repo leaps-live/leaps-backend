@@ -219,6 +219,46 @@ router.put("/put/:userid", async (req, res) => {
   }
 });
 
+// change user password by userid
+router.put("/changepassword/:userid", async (req, res) => {
+  try {
+    const { userid } = req.params;
+    const { newPassword } = req.body;
+
+    const editUserPassword = await pool.query(
+      "UPDATE tbl_user SET userPassword = $1 WHERE userid = $2",
+      [newPassword, userid]
+    );
+
+    console.log("editUserPassword", editUserPassword);
+
+    res.json("Succesfully Changed Password");
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+// change user password by email
+router.put("/changepassword/email/:useremail", async (req, res) => {
+  try {
+    const { useremail } = req.params;
+    const { newPassword } = req.body;
+
+    const editUserPassword = await pool.query(
+      "UPDATE tbl_user SET userPassword = $1 WHERE useremail = $2",
+      [newPassword, useremail]
+    );
+
+    console.log("editUserPassword", editUserPassword);
+
+    res.json("Succesfully Changed Password");
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+});
+
 router.post("/search/username", async (req, res) => {
   try {
     const { userinput } = req.body;
