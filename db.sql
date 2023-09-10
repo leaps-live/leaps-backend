@@ -62,6 +62,9 @@ CREATE TABLE tbl_game (
   numberOfQuarters INT NOT NULL DEFAULT 1,
   minutesPerQuarter INT NOT NULL DEFAULT 5,
   gameDescription VARCHAR,
+  homeTeam VARCHAR,
+  awayTeam VARCHAR,
+  location VARCHAR
 );
 
 CREATE TABLE tbl_game_league (
