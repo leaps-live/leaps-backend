@@ -6,7 +6,6 @@ const pool = require("../db");
 router.post("/new", async (req, res) => {
   try {
     const {
-      gameName,
       gameDescription,
       teamA,
       teamB,
@@ -19,7 +18,6 @@ router.post("/new", async (req, res) => {
     let newGame = await pool.query(
       "INSERT INTO tbl_game (gameName, gameDescription, teamA, teamB, leagueid, startTime, numberOfQuarters, minutesPerQuarter, leaguename) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
       [
-        gameName,
         gameDescription,
         teamA,
         teamB,
@@ -97,7 +95,6 @@ router.put("/:gameid", async (req, res) => {
   try {
     const { gameid } = req.params;
     const {
-      gameName,
       gameDescription,
       teamA,
       teamB,
@@ -115,7 +112,6 @@ router.put("/:gameid", async (req, res) => {
     const updateGame = await pool.query(
       "UPDATE tbl_league SET gameName = $1, gameDescription = $2, teamA = $3, teamB = $4, leagueid = $5, startTime = $6, teamA_score = $7, teamB_score = $8, isStart = $9, isEnd = $10, recordingurl = $11, numberOfQuarters = $12, minutesPerQuarter = $13 WHERE gameid = $14 RETURNING *",
       [
-        gameName,
         gameDescription,
         teamA,
         teamB,
