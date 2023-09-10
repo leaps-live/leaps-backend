@@ -147,6 +147,7 @@ router.put("/:gameid", async (req, res) => {
   }
 });
 
+// TODO: need to fix this since these columns don't exist anymore in the table
 router.post("/search/gamename", async (req, res) => {
   try {
     const { userInput } = req.body;
