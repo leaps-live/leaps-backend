@@ -16,7 +16,7 @@ router.post("/new", async (req, res) => {
     } = req.body;
 
     let newGame = await pool.query(
-      "INSERT INTO tbl_game (gameName, gameDescription, teamA, teamB, leagueid, startTime, numberOfQuarters, minutesPerQuarter, leaguename) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
+      "INSERT INTO tbl_game (gameDescription, teamA, teamB, leagueid, startTime, numberOfQuarters, minutesPerQuarter, leaguename) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
       [
         gameDescription,
         teamA,
@@ -110,7 +110,7 @@ router.put("/:gameid", async (req, res) => {
     } = req.body;
 
     const updateGame = await pool.query(
-      "UPDATE tbl_league SET gameName = $1, gameDescription = $2, teamA = $3, teamB = $4, leagueid = $5, startTime = $6, teamA_score = $7, teamB_score = $8, isStart = $9, isEnd = $10, recordingurl = $11, numberOfQuarters = $12, minutesPerQuarter = $13 WHERE gameid = $14 RETURNING *",
+      "UPDATE tbl_league SET gameDescription = $1, teamA = $2, teamB = $3, leagueid = $4, startTime = $5, teamA_score = $6, teamB_score = $7, isStart = $8, isEnd = $9, recordingurl = $10, numberOfQuarters = $11, minutesPerQuarter = $12 WHERE gameid = $13 RETURNING *",
       [
         gameDescription,
         teamA,
