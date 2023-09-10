@@ -11,15 +11,11 @@ router.post("/new", async (req, res) => {
       teamB,
       leagueid,
       startTime,
-      endTime,
       numberOfQuarters,
       minutesPerQuarter,
-      teamAname,
-      teamBname,
-      leagueName,
     } = req.body;
 
-    let newGane = await pool.query(
+    let newGame = await pool.query(
       "INSERT INTO tbl_game (gameName, teamA, teamB, leagueid, startTime, endTime, numberOfQuarters, minutesPerQuarter, teamaname, teambname, leaguename) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *",
       [
         gameName,
@@ -27,12 +23,8 @@ router.post("/new", async (req, res) => {
         teamB,
         leagueid,
         startTime,
-        endTime,
         numberOfQuarters,
         minutesPerQuarter,
-        teamAname,
-        teamBname,
-        leagueName,
       ]
     );
 
@@ -108,7 +100,6 @@ router.put("/:gameid", async (req, res) => {
       teamB,
       leagueid,
       startTime,
-      endTime,
       teamA_score,
       teamB_score,
       isStart,
@@ -126,7 +117,6 @@ router.put("/:gameid", async (req, res) => {
         teamB,
         leagueid,
         startTime,
-        endTime,
         teamA_score,
         teamB_score,
         isStart,
