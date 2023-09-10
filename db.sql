@@ -50,12 +50,10 @@ CREATE TABLE tbl_team_league (
 
 CREATE TABLE tbl_game (
   gameid UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
-  gameName VARCHAR(30) NOT NULL,
   teamA UUID REFERENCES tbl_team(teamid) ON DELETE CASCADE NOT NULL,
   teamB UUID REFERENCES tbl_team(teamid) ON DELETE CASCADE NOT NULL,
   leagueid UUID REFERENCES tbl_league(leagueid) ON DELETE CASCADE NOT NULL,
   startTime TIMESTAMP,
-  endTime TIMESTAMP,
   teamA_score INT NOT NULL DEFAULT 0,
   teamB_score INT NOT NULL DEFAULT 0,
   isStart BOOLEAN NOT NULL DEFAULT FALSE,
@@ -63,9 +61,7 @@ CREATE TABLE tbl_game (
   recordingurl VARCHAR,
   numberOfQuarters INT NOT NULL DEFAULT 1,
   minutesPerQuarter INT NOT NULL DEFAULT 5,
-  teamaname VARCHAR,
-  teambname VARCHAR,
-  leaguename VARCHAR
+  gameDescription VARCHAR,
 );
 
 CREATE TABLE tbl_game_league (
