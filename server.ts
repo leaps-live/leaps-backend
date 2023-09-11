@@ -1,8 +1,8 @@
 import { App } from "./app";
 
-require("dotenv").config();
+import env from "./lib/env";
 
-const PORT: number = parseInt(process.env.PORT || "8080");
+const PORT: number = env.PORT;
 
 const app = new App(PORT);
 

@@ -1,5 +1,6 @@
 import cors from "cors";
 import express, { type Express } from "express";
+import authRouter from "./routers/auth";
 
 const PORT = process.env.PORT || 8080;
 
@@ -22,6 +23,7 @@ export class App {
     this.app.use("/game", require("./routers/games"));
     this.app.use("/teams", require("./routers/teams"));
     this.app.use("/teamplayer", require("./routers/teamplayer"));
+    this.app.use("/auth", authRouter);
   }
 
   public listen() {
