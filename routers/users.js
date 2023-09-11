@@ -285,11 +285,11 @@ router.put("/changeemail/:userid", async (req, res) => {
     const { newEmail } = req.body;
 
     const editUserEmail = await pool.query(
-      "UPDATE tbl_user SET useremail= $1 WHERE userid = $2",
+      "UPDATE tbl_user SET useremail= $1 WHERE userid = $2 RETURNING *",
       [newEmail, userid]
     );
 
-    res.json("Succesfully Changed Email");
+    res.json(editUserEmail.rows[0]);
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server Error");
@@ -302,12 +302,12 @@ router.put("/changeusername/:userid", async (req, res) => {
     const { userid } = req.params;
     const { newUsername } = req.body;
 
-    const editUserEmail = await pool.query(
-      "UPDATE tbl_user SET username= $1 WHERE userid = $2",
+    const editUserUsername = await pool.query(
+      "UPDATE tbl_user SET username= $1 WHERE userid = $2 RETURNING *",
       [newUsername, userid]
     );
 
-    res.json("Succesfully Changed Username");
+    res.json(editUserUsername.rows[0]);
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server Error");
