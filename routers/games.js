@@ -6,7 +6,6 @@ const pool = require("../db");
 router.post("/new", async (req, res) => {
   try {
     const {
-      gameName,
       gameDescription,
       teamA,
       teamB,
@@ -14,12 +13,14 @@ router.post("/new", async (req, res) => {
       startTime,
       numberOfQuarters,
       minutesPerQuarter,
+      location,
+      homeTeam,
+      awayTeam,
     } = req.body;
 
     let newGame = await pool.query(
-      "INSERT INTO tbl_game (gameName, gameDescription, teamA, teamB, leagueid, startTime, numberOfQuarters, minutesPerQuarter, leaguename) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
+      "INSERT INTO tbl_game (gameDescription, teamA, teamB, leagueid, startTime, numberOfQuarters, minutesPerQuarter, location, homeTeam, awayTeam) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *",
       [
-        gameName,
         gameDescription,
         teamA,
         teamB,
@@ -27,6 +28,9 @@ router.post("/new", async (req, res) => {
         startTime,
         numberOfQuarters,
         minutesPerQuarter,
+        location,
+        homeTeam,
+        awayTeam,
       ]
     );
 
@@ -97,7 +101,6 @@ router.put("/:gameid", async (req, res) => {
   try {
     const { gameid } = req.params;
     const {
-      gameName,
       gameDescription,
       teamA,
       teamB,
@@ -110,12 +113,14 @@ router.put("/:gameid", async (req, res) => {
       recordingurl,
       numberOfQuarters,
       minutesPerQuarter,
+      homeTeam,
+      awayTeam,
+      location,
     } = req.body;
 
     const updateGame = await pool.query(
-      "UPDATE tbl_league SET gameName = $1, gameDescription = $2, teamA = $3, teamB = $4, leagueid = $5, startTime = $6, teamA_score = $7, teamB_score = $8, isStart = $9, isEnd = $10, recordingurl = $11, numberOfQuarters = $12, minutesPerQuarter = $13 WHERE gameid = $14 RETURNING *",
+      "UPDATE tbl_league SET gameDescription = $1, teamA = $2, teamB = $3, leagueid = $4, startTime = $5, teamA_score = $6, teamB_score = $7, isStart = $8, isEnd = $9, recordingurl = $10, numberOfQuarters = $11, minutesPerQuarter = $12, homeTeam = $13, awayTeam = $14, location = $15 WHERE gameid = $16 RETURNING *",
       [
-        gameName,
         gameDescription,
         teamA,
         teamB,
@@ -128,6 +133,9 @@ router.put("/:gameid", async (req, res) => {
         recordingurl,
         numberOfQuarters,
         minutesPerQuarter,
+        homeTeam,
+        awayTeam,
+        location,
         gameid,
       ]
     );
@@ -139,6 +147,7 @@ router.put("/:gameid", async (req, res) => {
   }
 });
 
+// TODO: need to fix this since these columns don't exist anymore in the table
 router.post("/search/gamename", async (req, res) => {
   try {
     const { userInput } = req.body;
