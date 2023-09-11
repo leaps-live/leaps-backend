@@ -296,6 +296,24 @@ router.put("/changeemail/:userid", async (req, res) => {
   }
 });
 
+// change username
+router.put("/changeusername/:userid", async (req, res) => {
+  try {
+    const { userid } = req.params;
+    const { newUsername } = req.body;
+
+    const editUserEmail = await pool.query(
+      "UPDATE tbl_user SET username= $1 WHERE userid = $2",
+      [newUsername, userid]
+    );
+
+    res.json("Succesfully Changed Username");
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+});
+
 //based on the userid to get user's teams
 router.get("/getTeam/:userid", async (req, res) => {
   try {
