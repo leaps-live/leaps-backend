@@ -259,6 +259,7 @@ router.put("/changepassword/email/:useremail", async (req, res) => {
   }
 });
 
+// serach user by username, firstname, or last name
 router.post("/search/username", async (req, res) => {
   try {
     const { userinput } = req.body;
@@ -271,6 +272,42 @@ router.post("/search/username", async (req, res) => {
     );
 
     res.json(searchUser.rows);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+// change user email
+router.put("/changeemail/:userid", async (req, res) => {
+  try {
+    const { userid } = req.params;
+    const { newEmail } = req.body;
+
+    const editUserEmail = await pool.query(
+      "UPDATE tbl_user SET useremail= $1 WHERE userid = $2 RETURNING *",
+      [newEmail, userid]
+    );
+
+    res.json(editUserEmail.rows[0]);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+// change username
+router.put("/changeusername/:userid", async (req, res) => {
+  try {
+    const { userid } = req.params;
+    const { newUsername } = req.body;
+
+    const editUserUsername = await pool.query(
+      "UPDATE tbl_user SET username= $1 WHERE userid = $2 RETURNING *",
+      [newUsername, userid]
+    );
+
+    res.json(editUserUsername.rows[0]);
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server Error");
