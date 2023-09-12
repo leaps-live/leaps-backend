@@ -190,6 +190,24 @@ router.get("/team/creator/:userid", async (req, res) => {
   }
 });
 
+// get all the leagues a user is a creator of
+router.get("/league/creator/:userid", async (req, res) => {
+  try {
+    const { userid } = req.params;
+
+    //check whether user exist
+    const leagues = await pool.query(
+      "SELECT * FROM tbl_league WHERE leaguecreator = $1",
+      [userid]
+    );
+
+    res.json(leagues.rows);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
 // get user's username
 router.get("/:userid/username", async (req, res) => {
   try {
