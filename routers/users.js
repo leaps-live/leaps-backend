@@ -172,18 +172,28 @@ router.get("/username/:userName", async (req, res) => {
   }
 });
 
-// get all the teams a user is a creator of
-router.get("/team/creator/:userid", async (req, res) => {
+// get all the games a user is a part of
+router.get("/games/:userid", async (req, res) => {
   try {
     const { userid } = req.params;
 
-    //check whether user exist
-    const teams = await pool.query(
-      "SELECT * FROM tbl_team WHERE teamcreator = $1",
+    const userGames = [];
+
+    //check whether games exist
+    const gamesTeamA = await pool.query(
+      "SELECT * FROM tbl_game g JOIN tbl_team_players tp ON g.teama = tp.teamid WHERE tp.userid = $1",
       [userid]
     );
 
-    res.json(teams.rows);
+    const gamesTeamB = await pool.query(
+      "SELECT * FROM tbl_game g JOIN tbl_team_players tp ON g.teamb= tp.teamid WHERE tp.userid = $1",
+      [userid]
+    );
+
+    userGames.push(gamesTeamA.rows);
+    userGames.push(gamesTeamB.rows);
+
+    res.json(userGames);
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");
