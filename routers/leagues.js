@@ -230,7 +230,11 @@ router.get("/getLeague/:userid", async (req, res) => {
         "SELECT * FROM tbl_team_league WHERE teamid = $1",
         [teamid]
       );
-      userLeagues.push(teaminfo.rows);
+
+      console.log(teaminfo.rows);
+      if (teaminfo.rows.length != 0) {
+        userLeagues.push(teaminfo.rows);
+      }
     }
 
     res.json(userLeagues);
