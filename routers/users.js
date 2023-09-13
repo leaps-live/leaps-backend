@@ -181,7 +181,7 @@ router.get("/games/:userid", async (req, res) => {
 
     //check whether games exist
     const gamesTeamA = await pool.query(
-      "SELECT * FROM tbl_game g JOIN tbl_team_players tp ON g.teama = tp.teamid WHERE tp.userid = $1",
+      "SELECT * FROM tbl_game g JOIN tbl_team_players tp ON g.teama= tp.teamid WHERE tp.userid = $1",
       [userid]
     );
 
