@@ -227,7 +227,7 @@ router.get("/getLeague/:userid", async (req, res) => {
 
     for (const teamid of teamIds) {
       const teaminfo = await pool.query(
-        "SELECT * FROM tbl_team JOIN tbl_team_league ON tbl_team_league.teamid = tbl_team.teamid WHERE tbl_team.teamid = $1",
+        "SELECT * FROM tbl_league JOIN tbl_team_league ON tbl_team_league.leagueid = tbl_league.leagueid WHERE tbl_team_league.teamid = $1",
         [teamid]
       );
 
