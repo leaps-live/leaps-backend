@@ -64,7 +64,9 @@ CREATE TABLE tbl_game (
   gameDescription VARCHAR,
   homeTeam VARCHAR,
   awayTeam VARCHAR,
-  location VARCHAR
+  location VARCHAR,
+  gameAName VARCHAR,
+  gameBName VARCHAR
 );
 
 CREATE TABLE tbl_game_league (

@@ -172,18 +172,28 @@ router.get("/username/:userName", async (req, res) => {
   }
 });
 
-// get all the teams a user is a creator of
-router.get("/team/creator/:userid", async (req, res) => {
+// get all the games a user is a part of
+router.get("/games/:userid", async (req, res) => {
   try {
     const { userid } = req.params;
 
-    //check whether user exist
-    const teams = await pool.query(
-      "SELECT * FROM tbl_team WHERE teamcreator = $1",
+    const userGames = [];
+
+    //check whether games exist
+    const gamesTeamA = await pool.query(
+      "SELECT * FROM tbl_game g JOIN tbl_team_players tp ON g.teama = tp.teamid WHERE tp.userid = $1",
       [userid]
     );
 
-    res.json(teams.rows);
+    const gamesTeamB = await pool.query(
+      "SELECT * FROM tbl_game g JOIN tbl_team_players tp ON g.teamb = tp.teamid WHERE tp.userid = $1",
+      [userid]
+    );
+
+    userGames.push(gamesTeamA.rows);
+    userGames.push(gamesTeamB.rows);
+
+    res.json(userGames);
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");
@@ -404,43 +414,6 @@ router.get("/isowner/:userid", async (req, res) => {
     res.json(true);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
-  }
-});
-
-//get user's league from the team
-router.get("/getLeague/:userid", async (req, res) => {
-  try {
-    const { userid } = req.params;
-
-    const getAllTeam = await pool.query(
-      "SELECT * FROM tbl_team_players WHERE userid = $1",
-      [userid]
-    );
-
-    //use the return value from the get all team
-    const teamIds = getAllTeam.rows.map((item) => item.teamid);
-    //const leagueIds = [];
-    const leagueInfo = [];
-
-    for (const teamid of teamIds) {
-      const leagueinfo = await pool.query(
-        "SELECT * FROM tbl_league l \
-      JOIN tbl_team_league tl ON l.leagueid = tl.leagueid  \
-      WHERE tl.teamid = $1",
-        [teamid]
-      );
-      leagueInfo.push(leagueinfo.rows);
-    }
-
-    //get all league info
-    // for(const leagueid of leagueIds) {
-    //   let leagueinfo = await pool.query("SELECT * FROM tbl_league WHERE leagueid = $1", l)
-    // }
-
-    res.json(leagueInfo);
-  } catch (error) {
-    console.error(error.message);
     res.status(500).send("Server Error");
   }
 });

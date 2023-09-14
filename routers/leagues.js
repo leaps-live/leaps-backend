@@ -197,18 +197,21 @@ router.post("/search/leaguename", async (req, res) => {
 //get all league info
 router.get("/get/:leagueid", async (req, res) => {
   try {
-    const {leagueid} = req.params;
+    const { leagueid } = req.params;
 
-    const getAllInfo = await pool.query("SELECT * FROM tbl_league WHERE leagueid = $1", [leagueid]);
+    const getAllInfo = await pool.query(
+      "SELECT * FROM tbl_league WHERE leagueid = $1",
+      [leagueid]
+    );
 
     res.json(getAllInfo.rows[0]);
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server Error");
   }
-})
+});
 
-//get user's league from the team
+//get the leagues a user is a part of
 router.get("/getLeague/:userid", async (req, res) => {
   try {
     const { userid } = req.params;
@@ -218,27 +221,26 @@ router.get("/getLeague/:userid", async (req, res) => {
       [userid]
     );
 
-    //use the return value from the get all team 
-    const teamIds = getAllTeam.rows.map(item => item.teamid);
-    //const leagueIds = [];
-    const leagueInfo = [];
+    const teamIds = getAllTeam.rows.map((item) => item.teamid);
 
-    for(const teamid of teamIds) {
-      const leagueinfo = await pool.query(
-        "SELECT * FROM tbl_league l \
-      JOIN tbl_team_league tl ON l.leagueid = tl.leagueid  \
-      WHERE tl.teamid = $1",
+    const userLeagues = [];
+
+    for (const teamid of teamIds) {
+      const teaminfo = await pool.query(
+        "SELECT * FROM tbl_league JOIN tbl_team_league ON tbl_team_league.leagueid = tbl_league.leagueid WHERE tbl_team_league.teamid = $1",
         [teamid]
       );
-      leagueInfo.push(leagueinfo.rows);
+
+      console.log(teaminfo.rows);
+      if (
+        teaminfo.rows.length != 0 &&
+        !userLeagues.includes(teaminfo.rows[0])
+      ) {
+        userLeagues.push(teaminfo.rows);
+      }
     }
 
-    //get all league info
-    // for(const leagueid of leagueIds) {
-    //   let leagueinfo = await pool.query("SELECT * FROM tbl_league WHERE leagueid = $1", l)
-    // }
-
-    res.json(leagueInfo);
+    res.json(userLeagues);
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server Error");
