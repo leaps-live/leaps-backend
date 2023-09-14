@@ -232,7 +232,10 @@ router.get("/getLeague/:userid", async (req, res) => {
       );
 
       console.log(teaminfo.rows);
-      if (teaminfo.rows.length != 0) {
+      if (
+        teaminfo.rows.length != 0 &&
+        !userLeagues.includes(teaminfo.rows[0])
+      ) {
         userLeagues.push(teaminfo.rows);
       }
     }
