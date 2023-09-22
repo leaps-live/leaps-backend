@@ -115,6 +115,8 @@ router.put("/:leagueid/add/admin", async (req, res) => {
     const { leagueid } = req.params;
     const { userid } = req.body;
 
+    // TODO: Check if that user is already an admin
+
     const addAdmin = await pool.query(
       "UPDATE tbl_league SET leagueAdmin = ARRAY_APPEND(leagueAdmin, $1) WHERE leagueid= $2",
       [userid, leagueid]

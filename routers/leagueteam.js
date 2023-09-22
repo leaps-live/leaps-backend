@@ -46,6 +46,7 @@ router.get("/checkplayers/test/", async (req, res) => {
 
     res.json(allPlayersFromTeam.rows[0]);
   } catch (err) {
+    res.status(500).send("Server Error");
     console.error(err);
   }
 });
@@ -54,7 +55,7 @@ router.get("/checkplayers/test/", async (req, res) => {
 router.post("/request/add", async (req, res) => {
   try {
     const { leagueid, teamid, teamCategories } = req.body;
-    const currentDate = moment().format("YYYY-MM-DD"); // Ex. 2023-08-03T19:06:46-07:00
+    const currentDate = moment().format("YYYY-MM-DDTHH:mm:ssZ"); // Ex. 2023-08-03T19:06:46-07:00
 
     const addRequestLeagueTeam = await pool.query(
       "INSERT INTO tbl_team_league (teamid, leagueid, teamCategories, pendingApproval, timerequestedtojoin) VALUES ($1, $2, $3, $4, $5) RETURNING *",
@@ -63,34 +64,115 @@ router.post("/request/add", async (req, res) => {
 
     res.json(addRequestLeagueTeam.rows[0]);
   } catch (err) {
+    res.status(500).send("Server Error");
     console.error(err);
   }
 });
 
-// league creator/admin accepts team's request to join the league
-// team add request to a league
+// league creator/admin accepts team's request to join a league
 router.put("/request/accept", async (req, res) => {
   try {
     const { leagueid, teamid, userid } = req.body;
-    const currentDate = moment().format("YYYY-MM-DD"); // Ex. 2023-08-03T19:06:46-07:00
+    const currentDate = moment().format("YYYY-MM-DDTHH:mm:ssZ"); // Ex. 2023-08-03T19:06:46-07:00
+
+    let userIsAdmin = false;
+    let userIsLeagueCreator = false;
 
     // check if user's position is league admin
-    const checkIfUserIsAdmin = await pool.query("");
+    const checkIfUserIsAdmin = await pool.query(
+      "SELECT leagueadmin FROM tbl_league WHERE leagueid = $1",
+      [leagueid]
+    );
+
+    const userAdmins = checkIfUserIsAdmin.rows[0]["leagueadmin"].map(
+      (userAdmin) => {
+        if (userAdmin === userid) {
+          userIsAdmin = true;
+        }
+      }
+    );
 
     // check if user's position is league creator
+    const checkIfUserIsLeagueCreator = await pool.query(
+      "SELECT leaguecreator FROM tbl_league WHERE leagueid = $1",
+      [leagueid]
+    );
+
+    if (checkIfUserIsLeagueCreator.rows[0]["leaguecreator"] === userid) {
+      userIsLeagueCreator = true;
+    }
+
+    if (!userIsAdmin && !userIsLeagueCreator) {
+      return res
+        .status(401)
+        .json(
+          "You do not have the authority to accept a team's request to join the league!"
+        );
+    }
 
     const updateRequestStatus = await pool.query(
       "UPDATE tbl_team_league SET pendingApproval = $1, timejoined = $2 WHERE teamid = $3 AND leagueid = $4 RETURNING *",
       [false, currentDate, teamid, leagueid]
     );
 
-    res.json(updateRequestStatus.rows[0]);
+    res.json("Successfully Added Team to League");
   } catch (err) {
+    res.status(500).send("Server Error");
     console.error(err);
   }
 });
 
-// league creator/admin denies team's request to join the league
+// league creator/admin denies team's request to join a league
+router.delete("/request/deny", async (req, res) => {
+  try {
+    const { leagueid, teamid, userid } = req.body;
+
+    let userIsAdmin = false;
+    let userIsLeagueCreator = false;
+
+    // check if user's position is league admin
+    const checkIfUserIsAdmin = await pool.query(
+      "SELECT leagueadmin FROM tbl_league WHERE leagueid = $1",
+      [leagueid]
+    );
+
+    const userAdmins = checkIfUserIsAdmin.rows[0]["leagueadmin"].map(
+      (userAdmin) => {
+        if (userAdmin === userid) {
+          userIsAdmin = true;
+        }
+      }
+    );
+
+    // check if user's position is league creator
+    const checkIfUserIsLeagueCreator = await pool.query(
+      "SELECT leaguecreator FROM tbl_league WHERE leagueid = $1",
+      [leagueid]
+    );
+
+    if (checkIfUserIsLeagueCreator.rows[0]["leaguecreator"] === userid) {
+      userIsLeagueCreator = true;
+    }
+
+    if (!userIsAdmin && !userIsLeagueCreator) {
+      return res
+        .status(401)
+        .json(
+          "You do not have the authority to accept a team's request to join the league!"
+        );
+    }
+
+    const updateRequestStatus = await pool.query(
+      "DELETE FROM tbl_team_league WHERE teamid = $1 and leagueid = $2",
+      [leagueid, teamid]
+    );
+
+    res.json("Successfully Denied Team to join League");
+  } catch (err) {
+    res.status(500).send("Server Error");
+    console.error(err);
+  }
+});
 
 //add team to the league
 router.post("/add", async (req, res) => {
