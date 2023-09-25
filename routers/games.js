@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const pool = require("../db");
+const moment = require("moment");
 
 // Create New Game
 router.post("/new", async (req, res) => {
@@ -41,6 +42,47 @@ router.post("/new", async (req, res) => {
     res.json(newGame.rows[0]);
   } catch (err) {
     console.error(err.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+// TODO: need to fix this since these columns don't exist anymore in the table
+router.post("/search/teamname", async (req, res) => {
+  try {
+    const { userInput } = req.body;
+
+    let editedUserInput = "%" + userInput + "%";
+    console.log(editedUserInput);
+
+    const searchGame = await pool.query(
+      "SELECT * FROM tbl_game WHERE (teamaname ilike $1) OR (teambname ilike $1)",
+      [editedUserInput]
+    );
+
+    res.json(searchGame.rows);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error");
+  }
+});
+
+// Get Games currently happening
+router.get("/today", async (req, res) => {
+  try {
+    const todaysDate = moment().format("YYYY-MM-DD");
+    let tomorrowDate = moment().add(1, "days").format("YYYY-MM-DD");
+
+    console.log("today: ", todaysDate);
+    console.log("tomorrowDate: ", tomorrowDate);
+
+    const gamesToday = await pool.query(
+      "SELECT * FROM tbl_game WHERE starttime BETWEEN $1 AND $2",
+      [todaysDate, tomorrowDate]
+    );
+
+    res.json(gamesToday.rows);
+  } catch (error) {
+    console.error(error.message);
     res.status(500).send("Server Error");
   }
 });
@@ -145,25 +187,6 @@ router.put("/:gameid", async (req, res) => {
     );
 
     res.json(updateGame.rows[0]);
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).send("Server Error");
-  }
-});
-
-// TODO: need to fix this since these columns don't exist anymore in the table
-router.post("/search/gamename", async (req, res) => {
-  try {
-    const { userInput } = req.body;
-
-    let editedUserInput = "%" + userInput + "%";
-
-    const searchGame = await pool.query(
-      "SELECT * FROM tbl_game WHERE (gamename ilike $1) OR (teamaname ilike $1) OR (teambname ilike $1) OR (leaguename ilike $1)",
-      [editedUserInput]
-    );
-
-    res.json(searchGame.rows);
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server Error");
