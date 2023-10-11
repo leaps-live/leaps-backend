@@ -8,42 +8,60 @@ router.get("/checkplayers/test/", async (req, res) => {
   try {
     const { leagueid, teamid, teamCategories } = req.body;
 
+    // const allPlayersFromTeam = await pool.query(
+    //   "SELECT * FROM tbl_team_players WHERE teamid = $1",
+    //   [teamid]
+    // );
+
+    // // Get all the userid for each player in the team
+    // const playerIds = allPlayersFromTeam.rows.map((item) => item.userid);
+
+    // for (const playerid of playerIds) {
+    //   // Get all the teams for each player in the team
+    //   const getThePlayerTeams = await pool.query(
+    //     "SELECT * FROM tbl_team_players WHERE userid = $1",
+    //     [playerid]
+    //   );
+
+    //   const allPlayerTeamIds = getThePlayerTeams.rows.map(
+    //     (item) => item.teamid
+    //   );
+
+    //   // Check if any of the player's other teams are in the league
+    //   for (const playerteamid of allPlayerTeamIds) {
+    //     const checkIfPlayersOtherTeamIsInTheLeague = await pool.query(
+    //       "SELECT * FROM tbl_team_league WHERE leagueid = $1 AND teamid = $2",
+    //       [leagueid, playerteamid]
+    //     );
+
+    //     if (checkIfPlayersOtherTeamIsInTheLeague.rows.length > 0) {
+    //       res.json(
+    //         "This Player is already in another team within the league you're joining"
+    //       );
+    //     }
+    //   }
+    // }
+
     const allPlayersFromTeam = await pool.query(
-      "SELECT * FROM tbl_team_players WHERE teamid = $1",
-      [teamid]
+      "SELECT * FROM tbl_team_players tp1 \
+    WHERE tp1.teamid = $1 \
+    AND EXISTS ( \
+      SELECT 1 \
+      FROM tbl_team_players AS tp2 \
+      JOIN tbl_team_league AS tl \
+      ON tp2.teamid = tl.teamid \
+      WHERE tp2.userid = tp1.userid \
+      AND tl.leagueid = $2 \
+    )"
     );
 
-    // Get all the userid for each player in the team
-    const playerIds = allPlayersFromTeam.rows.map((item) => item.userid);
-
-    for (const playerid of playerIds) {
-      // Get all the teams for each player in the team
-      const getThePlayerTeams = await pool.query(
-        "SELECT * FROM tbl_team_players WHERE userid = $1",
-        [playerid]
-      );
-
-      const allPlayerTeamIds = getThePlayerTeams.rows.map(
-        (item) => item.teamid
-      );
-
-      // Check if any of the player's other teams are in the league
-      for (const playerteamid of allPlayerTeamIds) {
-        const checkIfPlayersOtherTeamIsInTheLeague = await pool.query(
-          "SELECT * FROM tbl_team_league WHERE leagueid = $1 AND teamid = $2",
-          [leagueid, playerteamid]
+    if (checkIfPlayersOtherTeamIsInTheLeague.rows.length > 0) {
+      res
+        .status(401)
+        .json(
+          "Your team contains players that have already joined in this league"
         );
-
-        if (checkIfPlayersOtherTeamIsInTheLeague.rows.length > 0) {
-          res.json(
-            "This Player is already in another team within the league you're joining"
-          );
-        }
-      }
     }
-
-    // check if they are in the league already
-
     res.json(allPlayersFromTeam.rows[0]);
   } catch (err) {
     res.status(500).send("Server Error");

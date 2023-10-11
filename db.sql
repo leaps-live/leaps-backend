@@ -12,6 +12,9 @@ CREATE TABLE tbl_user (
     userCoins INT NOT NULL DEFAULT 0
 );
 
+ALTER TABLE tbl_user
+ADD COLUMN userRole TEXT[] NOT NULL DEFAULT [1, ];
+
 -- League Table
 CREATE TABLE tbl_league (
     leagueId UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
@@ -125,6 +128,7 @@ CREATE TABLE tbl_league_Type (
      league_typeid UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
      league_type VARCHAR(55) NOT NULL,
 )
+
 
 
 

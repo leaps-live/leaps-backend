@@ -218,29 +218,40 @@ router.get("/getLeague/:userid", async (req, res) => {
   try {
     const { userid } = req.params;
 
-    const getAllTeam = await pool.query(
-      "SELECT * FROM tbl_team_players WHERE userid = $1",
+    // const getAllTeam = await pool.query(
+    //   "SELECT * FROM tbl_team_players WHERE userid = $1",
+    //   [userid]
+    // );
+
+    // const teamIds = getAllTeam.rows.map((item) => item.teamid);
+
+    // const userLeagues = [];
+
+    // for (const teamid of teamIds) {
+    //   const teaminfo = await pool.query(
+    //     "SELECT * FROM tbl_league JOIN tbl_team_league ON tbl_team_league.leagueid = tbl_league.leagueid WHERE tbl_team_league.teamid = $1",
+    //     [teamid]
+    //   );
+
+    //   console.log(teaminfo.rows);
+    //   if (
+    //     teaminfo.rows.length != 0 &&
+    //     !userLeagues.includes(teaminfo.rows[0])
+    //   ) {
+    //     userLeagues.push(teaminfo.rows);
+    //   }
+    // }
+
+    const userLeagues = await pool.query(
+      " \
+    SELECT * FROM tbl_league l  \
+    JOIN tbl_team_league tl ON tl.leagueid = l.leagueid \
+    JOIN tbl_team t ON t.teamid = tl.teamid \
+    JOIN tbl_team_players tp ON tp.teamid = t.teamid \
+    WHERE tp.userid = $1 \
+    ",
       [userid]
     );
-
-    const teamIds = getAllTeam.rows.map((item) => item.teamid);
-
-    const userLeagues = [];
-
-    for (const teamid of teamIds) {
-      const teaminfo = await pool.query(
-        "SELECT * FROM tbl_league JOIN tbl_team_league ON tbl_team_league.leagueid = tbl_league.leagueid WHERE tbl_team_league.teamid = $1",
-        [teamid]
-      );
-
-      console.log(teaminfo.rows);
-      if (
-        teaminfo.rows.length != 0 &&
-        !userLeagues.includes(teaminfo.rows[0])
-      ) {
-        userLeagues.push(teaminfo.rows);
-      }
-    }
 
     res.json(userLeagues);
   } catch (error) {
