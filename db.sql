@@ -7,6 +7,7 @@ CREATE TABLE tbl_user (
     userEmail VARCHAR(40) NOT NULL UNIQUE,
     userPassword VARCHAR(25) NOT NULL,
     userBirthday DATE NOT NULL,
+    userLocation VARCHAR,
     userHeight DECIMAL,
     userWeight DECIMAL,
     userCoins INT NOT NULL DEFAULT 0
