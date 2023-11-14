@@ -1,15 +1,11 @@
-const express = require("express");
-const path = require("path");
-
 require("dotenv").config();
-
+const express = require("express");
 const app = express();
 
-// put this in db.js file
 const Pool = require("pg").Pool;
 const pool = new Pool({
   user: "leaps",
-  password: process.env.DATABASE_PASSWORD, // put this in env file
+  password: process.env.DATABASE_PASSWORD,
   database: "initial_leaps",
   host: process.env.DATABASE_HOST,
   port: 5432,
@@ -36,5 +32,6 @@ app.use("/game", require("./routers/games"));
 app.use("/team", require("./routers/teams"));
 app.use("/teamplayer", require("./routers/teamplayer"));
 app.use("/search", require("./routers/search"));
+app.use("/upload", require("./routers/upload"));
 
 app.listen(8080, () => console.log("Server listening on port 8080"));
