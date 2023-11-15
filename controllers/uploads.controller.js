@@ -1,7 +1,7 @@
-const upload = require("../middleware/s3.upload");
+const uploadImage = require("../middleware/s3.upload");
 
 const uploadFile = async (req, res) => {
-  upload(req, res, async function (err) {
+  uploadImage(req, res, async function (err) {
     if (err) {
       return res.status(400).send({
         result: 0,
@@ -14,6 +14,11 @@ const uploadFile = async (req, res) => {
       message: "uploaded successfully",
     });
   });
+};
+
+exports.uploadSingle = (req, res) => {
+  // req.file contains a file object
+  res.json(req.file);
 };
 
 module.exports = {
