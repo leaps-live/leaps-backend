@@ -1,16 +1,18 @@
 const multer = require("multer");
 const multerS3 = require("multer-s3-transform");
-const AWS = require("aws-sdk");
+const { S3 } = require("@aws-sdk/client-s3");
 const config = require("../config/s3.config");
 
-const S3 = new AWS.S3({
-  accessKeyId: config.AWS_ACCESS_KEY_ID,
-  secretAccessKey: config.AWS_SECRET_ACCESS_KEY,
+const S3Data = new S3({
+  credentials: {
+    accessKeyId: config.AWS_ACCESS_KEY_ID,
+    secretAccessKey: config.AWS_SECRET_ACCESS_KEY,
+  },
 });
 
 const upload = multer({
   storage: multerS3({
-    s3: S3,
+    s3: S3Data,
     bucket: config.AWS_BUCKET_NAME,
     acl: "public-read",
     key: function (req, file, cb) {
