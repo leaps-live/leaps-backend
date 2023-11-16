@@ -1,26 +1,22 @@
-const uploadImage = require("../middleware/s3.upload");
-
-const uploadFile = async (req, res) => {
-  uploadImage(req, res, async function (err) {
-    if (err) {
-      return res.status(400).send({
-        result: 0,
-        message: err,
-      });
-    }
-
-    return res.status(200).send({
-      result: 1,
-      message: "uploaded successfully",
-    });
-  });
-};
+const upload = require("../middleware/s3.upload");
+const util = require("util");
 
 exports.uploadSingle = (req, res) => {
   // req.file contains a file object
   res.json(req.file);
 };
 
-module.exports = {
-  uploadFile,
+exports.uploadMultiple = (req, res) => {
+  // req.files contains an array of file object
+  res.json(req.files);
+};
+
+exports.uploadSingleV2 = async (req, res) => {
+  const uploadFile = util.promisify(upload.single("file"));
+  try {
+    await uploadFile(req, res);
+    res.json(req.file);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };

@@ -1,29 +1,21 @@
-// const uploadController = require("../controllers/uploads.controller");
-const uploadImage = require("../middleware/s3.upload");
-
 const express = require("express");
 const router = express.Router();
-const pool = require("../db");
+
+const upload = require("../middleware/s3.upload");
+const uploadController = require("../controllers/uploads.controller");
 
 router.post(
-  "/image-upload",
-  uploadImage.single("image"), // our uploadImage middleware
-  (req, res, next) => {
-    /* 
-           req.file = { 
-             fieldname, originalname, 
-             mimetype, size, bucket, key, location
-           }
-        */
-
-    // location key in req.file holds the s3 url for the image
-    let data = {};
-    if (req.file) {
-      data.image = req.file.location;
-    }
-
-    // HERE IS YOUR LOGIC TO UPDATE THE DATA IN DATABASE
-  }
+  "/upload-single",
+  upload.single("file"),
+  uploadController.uploadSingle
 );
+router.post(
+  "/upload-multiple",
+  upload.array("files", 5),
+  uploadController.uploadMultiple
+);
+
+/* ------------------------ upload and error handling ----------------------- */
+router.post("/upload-single-v2", uploadController.uploadSingleV2);
 
 module.exports = router;
