@@ -38,7 +38,8 @@ CREATE TABLE tbl_team_players (
     teamPlayersId UUID DEFAULT uuid_generate_v4() UNIQUE PRIMARY KEY,
     teamId UUID REFERENCES tbl_team(teamId) ON DELETE CASCADE NOT NULL,
     userId UUID REFERENCES tbl_user(userId) ON DELETE CASCADE NOT NULL,
-    userRole BOOLEAN NOT NULL DEFAULT FALSE
+    userRole BOOLEAN NOT NULL DEFAULT FALSE,
+    teamCaptain VARCHAR,
 );
 
 -- Bridge Table Between the Team and League the team is apart of 
