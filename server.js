@@ -1,6 +1,8 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
+const multer = require("multer");
+const upload = multer();
 
 const Pool = require("pg").Pool;
 const pool = new Pool({
@@ -15,6 +17,10 @@ const pool = new Pool({
 const cors = require("cors");
 
 app.use(cors());
+
+var bodyParser = require("body-parser");
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 pool
   .connect()

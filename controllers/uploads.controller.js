@@ -7,7 +7,7 @@ exports.uploadSingle = (req, res) => {
 };
 
 exports.uploadMultiple = (req, res) => {
-  // req.files contains an array of file object
+  // req.files contains an array of file object)
   res.json(req.files);
 };
 
