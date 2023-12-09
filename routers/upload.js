@@ -56,7 +56,8 @@ router.post("/upload-single-v3/:userid", userMiddleware, async (req, res) => {
 });
 
 router.post(
-  "/upload-multiple",
+  "/upload-multiple/:userid",
+  userMiddleware,
   upload.array("files", 5),
   uploadController.uploadMultiple
 );
