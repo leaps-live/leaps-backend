@@ -249,11 +249,12 @@ router.get("/:userid/username", async (req, res) => {
 router.put("/put/:userid", async (req, res) => {
   try {
     const { userid } = req.params;
-    const { userBirthday, userHeight, userWeight, userLocation } = req.body;
+    const { userBirthday, userHeight, userSportsInterest, userLocation } =
+      req.body;
 
     const editRegularProfile = await pool.query(
-      "UPDATE tbl_user SET userBirthday = $1, userHeight = $2, userWeight = $3, userLocation = $4 WHERE userid = $5 RETURNING *",
-      [userBirthday, userHeight, userWeight, userLocation, userid]
+      "UPDATE tbl_user SET userBirthday = $1, userHeight = $2, userSportsInterest = $3, userLocation = $4 WHERE userid = $5 RETURNING *",
+      [userBirthday, userHeight, userSportsInterest, userLocation, userid]
     );
 
     console.log("editRegularProfile", editRegularProfile);

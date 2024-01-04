@@ -10,6 +10,7 @@ CREATE TABLE tbl_user (
     userLocation VARCHAR,
     userHeight DECIMAL,
     userWeight DECIMAL,
+    userSportsInterest VARCHAR,
     userCoins INT NOT NULL DEFAULT 0
 );
 
